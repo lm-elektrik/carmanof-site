@@ -1,0 +1,15 @@
+@mixin container {
+  max-width: $container-width;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+@mixin section-spacing {
+  margin-top: $space-96;
+}
+
+@mixin card {
+  background: $color-white;
+  border-radius: $radius-lg;
+  padding: $space-24;
+}

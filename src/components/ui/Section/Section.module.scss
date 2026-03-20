@@ -1,0 +1,11 @@
+@use "@/styles/variables" as *;
+
+.section {
+  margin-top: $space-96;
+}
+
+.alt {
+  background: $color-white;
+  border-radius: $radius-xl;
+  padding: $space-64 0;
+}
