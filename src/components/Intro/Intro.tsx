@@ -9,7 +9,7 @@ type IntroStage = "visible" | "moving" | "fading" | "hidden";
 type IntroProps = {
   // enabled приходит с сервера из layout.tsx.
   // Это главный анти-баг: сервер и клиент сразу согласованы,
-  // поэтому нет hydration mismatch.
+  // поэтому нет hydration mismatch на первом рендере.
   enabled: boolean;
 };
 
@@ -27,7 +27,34 @@ export default function Intro({ enabled }: IntroProps) {
   );
 
   const logoRef = useRef<HTMLDivElement | null>(null);
+
+  // Защита от повторного старта анимации.
   const hasStartedRef = useRef(false);
+
+  // Защита от повторного завершения интро.
+  const hasFinishedRef = useRef(false);
+
+  // Храним id requestAnimationFrame, чтобы корректно чистить.
+  const rafRef = useRef<number | null>(null);
+
+  // Синхронизация с серверным enabled.
+  // Это не меняет текущую рабочую логику, но делает компонент устойчивее,
+  // если когда-нибудь поведение enabled станет более динамическим.
+  useEffect(() => {
+    if (enabled) {
+      setShouldRender(true);
+      setStage("visible");
+      hasStartedRef.current = false;
+      hasFinishedRef.current = false;
+      setTransformValue(
+        "translate(-50%, -50%) translate3d(0px, 0px, 0px) scale(1)",
+      );
+    } else {
+      document.body.classList.remove("intro-lock");
+      setStage("hidden");
+      setShouldRender(false);
+    }
+  }, [enabled]);
 
   useEffect(() => {
     if (!enabled) return;
@@ -43,17 +70,23 @@ export default function Intro({ enabled }: IntroProps) {
     return () => {
       document.body.classList.remove("intro-lock");
       window.clearTimeout(startTimer);
+
+      if (rafRef.current !== null) {
+        window.cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      }
     };
   }, [enabled]);
 
   function runAnimation() {
-    if (hasStartedRef.current) return;
+    if (hasStartedRef.current || hasFinishedRef.current) return;
     hasStartedRef.current = true;
 
     const logo = logoRef.current;
     const target = document.getElementById("header-logo");
 
-    // Если цель в хедере не найдена, завершаем аккуратно.
+    // Если цель в хедере не найдена, завершаем аккуратно,
+    // чтобы интро не зависало поверх страницы.
     if (!logo || !target) {
       finishIntro();
       return;
@@ -77,8 +110,9 @@ export default function Intro({ enabled }: IntroProps) {
       `translate(-50%, -50%) translate3d(${deltaX}px, ${deltaY}px, 0) scale(0.05)`,
     );
 
-    requestAnimationFrame(() => {
+    rafRef.current = window.requestAnimationFrame(() => {
       setStage("moving");
+      rafRef.current = null;
     });
   }
 
@@ -87,6 +121,7 @@ export default function Intro({ enabled }: IntroProps) {
   ) {
     if (event.propertyName !== "transform") return;
     if (stage !== "moving") return;
+    if (hasFinishedRef.current) return;
 
     setStage("fading");
   }
@@ -96,11 +131,15 @@ export default function Intro({ enabled }: IntroProps) {
   ) {
     if (event.propertyName !== "opacity") return;
     if (stage !== "fading") return;
+    if (hasFinishedRef.current) return;
 
     finishIntro();
   }
 
   function finishIntro() {
+    if (hasFinishedRef.current) return;
+    hasFinishedRef.current = true;
+
     // Ставим session cookie:
     // без expires/max-age это cookie живёт до закрытия браузера.
     document.cookie = "intro-played=1; path=/; SameSite=Lax";

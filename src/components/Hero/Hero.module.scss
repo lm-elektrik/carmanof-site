@@ -3,6 +3,8 @@
 }
 
 .card {
+  position: relative;
+
   display: grid;
   grid-template-columns: minmax(0, 1fr) 520px;
   column-gap: 44px;
@@ -13,8 +15,40 @@
 
   border: 1px solid #ddd6cb;
   border-radius: 28px;
-  background: #fbfaf7;
+
+  /*
+    Поверхность как в Header/Intro
+  */
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.28) 0%,
+      rgba(255, 255, 255, 0) 36%
+    ),
+    #fbfaf7;
+
+  box-shadow:
+    0 18px 40px rgba(29, 31, 35, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45);
+
+  overflow: hidden;
 }
+
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.06) 0%,
+    rgba(255, 255, 255, 0) 28%
+  );
+}
+
+/* ---------------- TEXT ---------------- */
 
 .content {
   display: flex;
@@ -50,7 +84,6 @@
   margin: 16px 0 0;
   font-size: 13px;
   line-height: 1.25;
-  font-weight: 400;
   color: #444342;
 }
 
@@ -61,14 +94,21 @@
   margin-top: 26px;
 }
 
+/* ---------------- MEDIA ---------------- */
+
 .media {
   position: relative;
   width: 520px;
   height: 500px;
   overflow: hidden;
   border-radius: 24px;
-  background: #d9d4cc;
   isolation: isolate;
+
+  background: #d9d4cc;
+
+  box-shadow:
+    0 16px 34px rgba(17, 20, 28, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
 .imageBase,
@@ -80,123 +120,90 @@
   background-size: cover;
 }
 
+/* базовая (default) */
 .imageBase {
   z-index: 1;
   background-image: url("/images/hero/hero-default.webp");
 }
 
+/* hover-картинка */
 .imageHover {
   z-index: 2;
   background-image: url("/images/hero/hero-hover.webp");
-  pointer-events: none;
-}
 
-.shine {
-  position: absolute;
-  top: -22%;
-  left: auto;
-  right: -32%;
-  width: 22%;
-  height: 144%;
-  z-index: 3;
-  pointer-events: none;
+  /*
+    Базовое состояние:
+    hover-картинка скрыта.
+    Смещение оставляем только для стартовой анимации.
+  */
   opacity: 0;
-  transform: rotate(30deg);
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.12) 24%,
-    rgba(255, 255, 255, 0.82) 50%,
-    rgba(255, 255, 255, 0.18) 76%,
-    rgba(255, 255, 255, 0) 100%
-  );
-  filter: blur(6px);
-  mix-blend-mode: screen;
+  transform: translateX(12px);
 }
 
+/* ---------------- СОСТОЯНИЯ ---------------- */
+
+/*
+  Стартовое состояние:
+  показываем default-картинку.
+*/
 .stateDefault .imageHover {
   opacity: 0;
-  clip-path: inset(0 0 0 100%);
+  transform: translateX(12px);
 }
 
-.stateHover .imageHover {
-  opacity: 1;
-  clip-path: inset(0 0 0 0);
-}
-
+/*
+  Авто-анимация при загрузке:
+  здесь оставляем и opacity, и смещение.
+*/
 .toHover .imageHover {
   opacity: 1;
-  animation: revealHoverWave 0.8s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+  transform: translateX(0);
+
+  /*
+    Стартовая анимация чуть выразительнее.
+  */
+  transition:
+    opacity 0.45s ease,
+    transform 0.45s ease;
 }
 
-.toHover .shine {
+/*
+  Обычное состояние после старта, когда курсора нет:
+  hover-картинка просто показана.
+  Без анимации смещения.
+*/
+.showHoverIdle .imageHover {
   opacity: 1;
-  animation: shinePass 0.8s ease forwards;
+  transform: translateX(0);
+
+  /*
+    После старта hover-логика работает только по opacity.
+  */
+  transition: opacity 0.22s ease;
 }
 
-.toDefault .imageHover {
-  opacity: 1;
-  animation: hideHoverWave 0.8s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+/*
+  Под курсором:
+  возвращаем default-картинку.
+  Тоже без смещения — только fade.
+*/
+.showDefaultOnHover .imageHover {
+  opacity: 0;
+  transform: translateX(0);
+
+  /*
+    Быстрый и мягкий hover без дерганья.
+  */
+  transition: opacity 0.22s ease;
 }
 
-.toDefault .shine {
-  opacity: 1;
-  animation: shinePass 0.8s ease forwards;
-}
-
-@keyframes revealHoverWave {
-  0% {
-    clip-path: polygon(100% 0, 100% 0, 100% 100%, 100% 100%);
-  }
-
-  100% {
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-  }
-}
-
-@keyframes hideHoverWave {
-  0% {
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-  }
-
-  100% {
-    clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
-  }
-}
-
-@keyframes shinePass {
-  0% {
-    opacity: 0;
-    right: -32%;
-  }
-
-  10% {
-    opacity: 1;
-  }
-
-  100% {
-    opacity: 0;
-    right: 108%;
-  }
-}
+/* ---------------- RESPONSIVE ---------------- */
 
 @media (max-width: 1240px) {
   .card {
     grid-template-columns: minmax(0, 1fr) 480px;
     column-gap: 32px;
     padding: 0 30px;
-  }
-
-  .textBlock {
-    max-width: 520px;
-  }
-
-  .title {
-    font-size: 56px;
-  }
-
-  .description {
-    font-size: 22px;
   }
 
   .media {
@@ -209,20 +216,7 @@
   .card {
     grid-template-columns: 1fr;
     row-gap: 28px;
-    min-height: auto;
     padding: 32px;
-  }
-
-  .textBlock {
-    max-width: none;
-  }
-
-  .title {
-    font-size: 48px;
-  }
-
-  .description {
-    font-size: 20px;
   }
 
   .media {
@@ -246,24 +240,6 @@
   .title {
     font-size: 34px;
     line-height: 0.97;
-  }
-
-  .description {
-    margin-top: 16px;
-    font-size: 18px;
-    line-height: 1.18;
-  }
-
-  .caption {
-    margin-top: 14px;
-    font-size: 12px;
-  }
-
-  .actions {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
-    margin-top: 22px;
   }
 
   .media {

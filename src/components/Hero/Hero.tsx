@@ -1,61 +1,55 @@
-'use client'
+"use client";
 
-import { useEffect, useRef, useState } from 'react'
-import styles from './Hero.module.scss'
-import Container from '@/components/ui/Container/Container'
-import Button from '@/components/ui/Button/Button'
+import { useEffect, useRef, useState } from "react";
+import styles from "./Hero.module.scss";
+import Container from "@/components/ui/Container/Container";
+import Button from "@/components/ui/Button/Button";
 
-type VisualState = 'default' | 'hover' | 'toHover' | 'toDefault'
+type IntroPhase = "idle" | "animating" | "done";
 
 export default function Hero() {
-  const [visualState, setVisualState] = useState<VisualState>('default')
-  const autoTimerRef = useRef<number | null>(null)
+  const [introPhase, setIntroPhase] = useState<IntroPhase>("idle");
+  const [isHovered, setIsHovered] = useState(false);
+  const autoTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
+    // Один раз запускаем стартовую анимацию после появления блока.
     autoTimerRef.current = window.setTimeout(() => {
-      setVisualState((prev) => (prev === 'default' ? 'toHover' : prev))
-    }, 1200)
+      setIntroPhase("animating");
+    }, 1200);
 
     return () => {
       if (autoTimerRef.current) {
-        window.clearTimeout(autoTimerRef.current)
+        window.clearTimeout(autoTimerRef.current);
       }
-    }
-  }, [])
+    };
+  }, []);
 
-  function handleAnimationEnd() {
-    setVisualState((prev) => {
-      if (prev === 'toHover') return 'hover'
-      if (prev === 'toDefault') return 'default'
-      return prev
-    })
+  function handleIntroTransitionEnd() {
+    if (introPhase === "animating") {
+      setIntroPhase("done");
+    }
   }
 
   function handleMouseEnter() {
-    setVisualState((prev) => {
-      if (prev === 'hover') return 'toDefault'
-      if (prev === 'toHover') return 'toDefault'
-      return prev
-    })
+    // Пока курсор НАД блоком — показываем default-картинку.
+    setIsHovered(true);
   }
 
   function handleMouseLeave() {
-    setVisualState((prev) => {
-      if (prev === 'default') return 'toHover'
-      if (prev === 'toDefault') return 'toHover'
-      return prev
-    })
+    // Как только курсор УШЕЛ — возвращаем обычное состояние.
+    setIsHovered(false);
   }
 
   const mediaClassName = [
     styles.media,
-    visualState === 'default' ? styles.stateDefault : '',
-    visualState === 'hover' ? styles.stateHover : '',
-    visualState === 'toHover' ? styles.toHover : '',
-    visualState === 'toDefault' ? styles.toDefault : '',
+    introPhase === "idle" ? styles.stateDefault : "",
+    introPhase === "animating" ? styles.toHover : "",
+    introPhase === "done" && isHovered ? styles.showDefaultOnHover : "",
+    introPhase === "done" && !isHovered ? styles.showHoverIdle : "",
   ]
     .filter(Boolean)
-    .join(' ')
+    .join(" ");
 
   return (
     <section className={styles.hero} id="home">
@@ -100,12 +94,13 @@ export default function Hero() {
           >
             <div className={styles.imageBase} />
 
-            <div className={styles.imageHover} onAnimationEnd={handleAnimationEnd} />
-
-            <div className={styles.shine} />
+            <div
+              className={styles.imageHover}
+              onTransitionEnd={handleIntroTransitionEnd}
+            />
           </div>
         </div>
       </Container>
     </section>
-  )
+  );
 }

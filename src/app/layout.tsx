@@ -58,7 +58,7 @@ export default async function RootLayout({
   const introPlayed = cookieStore.get("intro-played")?.value === "1";
 
   return (
-    <html lang="ru">
+    <html lang="ru" suppressHydrationWarning>
       <body className={manrope.variable}>
         <Intro enabled={!introPlayed} />
         <Header />
