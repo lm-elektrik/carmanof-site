@@ -25,8 +25,8 @@ const processSteps: ProcessStep[] = [
     description: "Ремонтируем или изготавливаем заново",
   },
   {
-    id: "return",
-    title: "Возврат",
+    id: "result",
+    title: "Результат",
     description: "Отправляем готовую приборку обратно",
   },
 ];
@@ -45,7 +45,7 @@ export default function ProcessBlock() {
               const isLast = index === processSteps.length - 1;
 
               return (
-                <div key={step.id} className={styles.stepGroup}>
+                <div key={step.id} className={styles.stepItem}>
                   <article className={styles.card}>
                     <h3 className={styles.cardTitle}>{step.title}</h3>
 
@@ -57,8 +57,8 @@ export default function ProcessBlock() {
                       <Image
                         src="/icons/process-block/step-arrow.svg"
                         alt=""
-                        width={44}
-                        height={44}
+                        width={46}
+                        height={64}
                         className={styles.arrowIcon}
                       />
                     </div>

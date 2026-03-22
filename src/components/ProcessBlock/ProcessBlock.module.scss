@@ -1,7 +1,6 @@
 .section {
   /*
     Внешний вертикальный ритм блока.
-    Подгоняется под соседние секции страницы.
   */
   margin: 96px 0;
 }
@@ -10,12 +9,7 @@
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-
-  /*
-    Блок оставляем воздушным и спокойным.
-    Без тяжелой подложки, чтобы не перегружать страницу.
-  */
-  padding: 0 8px;
+  padding: 0;
 }
 
 .title {
@@ -31,57 +25,58 @@
 }
 
 .steps {
+  /*
+    4 карточки по 294 + 3 gap по 8 = 1200
+  */
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 8px;
+
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-/*
-  Группа = карточка + стрелка после неё.
-  Так проще удерживать ровный ритм между шагами.
-*/
-.stepGroup {
-  display: flex;
-  align-items: center;
+.stepItem {
+  /*
+    Стрелка привязывается к конкретному шагу.
+  */
+  position: relative;
+  width: 294px;
+  flex: 0 0 294px;
 }
 
 .card {
-  width: 268px;
-  min-height: 148px;
+  width: 100%;
+  min-height: 152px;
 
-  padding: 22px 20px;
+  padding: 24px 36px;
 
   background: #ffffff;
-  border: 1px solid #d7dde8;
+  border: 1px solid #dadde3;
   border-radius: 20px;
 
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  gap: 10px;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 12px;
 
   box-shadow:
     0 8px 20px rgba(17, 24, 39, 0.03),
     inset 0 1px 0 rgba(255, 255, 255, 0.42);
 
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-.card:hover {
-  transform: translateY(-2px);
-  box-shadow:
-    0 12px 28px rgba(17, 24, 39, 0.05),
-    inset 0 1px 0 rgba(255, 255, 255, 0.42);
+  /*
+    Блок информационный — без hover-анимации и без курсора pointer.
+  */
 }
 
 .cardTitle {
   margin: 0;
 
   font-family: var(--font-manrope), sans-serif;
-  font-size: 18px;
+  font-size: 22px;
   font-weight: 600;
   line-height: 1.2;
   color: #1d1f23;
@@ -91,30 +86,48 @@
   margin: 0;
 
   font-family: var(--font-manrope), sans-serif;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 400;
-  line-height: 1.45;
+  line-height: 1.4;
   color: #1d1f23;
   opacity: 0.78;
 }
 
 .arrow {
-  width: 44px;
-  height: 44px;
-  margin: 0 12px;
+  /*
+    Формула:
+    правый край карточки + половина gap - половина ширины стрелки
+
+    gap = 8
+    icon = 46
+    4 - 23 = -19
+
+    => ставим стрелку у правого края карточки и
+       смещаем влево на 19px.
+  */
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  transform: translate(-19px, -50%);
+
+  width: 46px;
+  height: 64px;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  flex-shrink: 0;
+  z-index: 2;
+  pointer-events: none;
 }
 
 .arrowIcon {
-  width: 44px;
-  height: 44px;
+  width: 46px;
+  height: 64px;
   display: block;
   object-fit: contain;
+
+  filter: drop-shadow(0 6px 10px rgba(17, 24, 39, 0.08));
   opacity: 0.92;
 }
 
@@ -122,27 +135,26 @@
    TABLET
    ========================= */
 @media (max-width: 1200px) {
+  .wrapper {
+    padding: 0 20px;
+  }
+
   .steps {
+    max-width: none;
     flex-wrap: wrap;
-    gap: 16px 20px;
+    justify-content: center;
+    gap: 16px 8px;
   }
 
-  .stepGroup {
-    /*
-      На tablet стрелки мешают сетке 2x2,
-      поэтому скрываем и оставляем чистые карточки.
-    */
-    display: block;
+  .stepItem {
+    width: calc(50% - 4px);
+    flex: 0 0 calc(50% - 4px);
+    min-width: 320px;
   }
 
-  .arrow {
-    display: none;
-  }
-
-  .card {
-    width: 100%;
-    max-width: 360px;
-  }
+  /*
+    Стрелки оставляем и на tablet.
+  */
 }
 
 @media (max-width: 960px) {
@@ -165,7 +177,7 @@
   }
 
   .wrapper {
-    padding: 0 4px;
+    padding: 0 12px;
   }
 
   .title {
@@ -177,18 +189,30 @@
     gap: 12px;
   }
 
+  .stepItem {
+    width: 100%;
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+
   .card {
-    max-width: none;
     min-height: auto;
-    padding: 18px 16px;
+    padding: 20px 24px;
     border-radius: 18px;
   }
 
   .cardTitle {
-    font-size: 17px;
+    font-size: 20px;
   }
 
   .cardDescription {
-    font-size: 14px;
+    font-size: 15px;
+  }
+
+  /*
+    На mobile стрелки уже мешают — убираем.
+  */
+  .arrow {
+    display: none;
   }
 }
