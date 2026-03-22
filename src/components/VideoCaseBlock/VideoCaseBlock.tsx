@@ -19,19 +19,19 @@ const videoCases: VideoCase[] = [
   {
     id: "bmw-e60",
     title: "BMW E60",
-    youtubeId: "dQw4w9WgXcQ",
+    youtubeId: "vBFih1j57ew",
     theme: "bmw",
   },
   {
     id: "audi-a4",
     title: "Audi A4",
-    youtubeId: "3JZ_D3ELwOQ",
+    youtubeId: "pOmuehcL2UM",
     theme: "audi",
   },
   {
     id: "mercedes-w204",
     title: "Mercedes W204",
-    youtubeId: "L_jWHffIx5E",
+    youtubeId: "LWFM6YMeiPI",
     theme: "mercedes",
   },
 ];
