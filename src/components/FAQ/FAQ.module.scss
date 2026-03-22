@@ -1,5 +1,4 @@
 .section {
-  // Единый ритм между секциями страницы.
   margin: 96px 0;
 }
 
@@ -14,7 +13,6 @@
 }
 
 .content {
-  // Внутренний контейнер: задаёт рабочую ширину и воздух блока.
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -22,7 +20,6 @@
 }
 
 .badge {
-  // Плашка слева в том же визуальном языке, что и у блока Prices.
   align-self: flex-start;
   display: inline-flex;
   align-items: center;
@@ -40,7 +37,6 @@
 }
 
 .list {
-  // Список FAQ-пунктов с одинаковым ритмом между элементами.
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -63,9 +59,8 @@
 }
 
 .trigger {
-  // Вся верхняя строка вопроса кликабельна, а не только знак справа.
   width: 100%;
-  min-height: 44px;
+  min-height: 48px;
   padding: 14px 20px;
   border: 0;
   background: transparent;
@@ -81,7 +76,6 @@
 }
 
 .question {
-  // Текст вопроса.
   font-family: Manrope, sans-serif;
   font-size: 16px;
   line-height: 22px;
@@ -90,7 +84,6 @@
 }
 
 .icon {
-  // Минималистичный знак + / − справа.
   flex-shrink: 0;
   width: 20px;
 
@@ -103,25 +96,28 @@
 }
 
 .panel {
-  // Закрытое состояние: ответ скрыт без резких скачков.
+  // Закрытое состояние: ответ полностью скрыт.
   display: grid;
   grid-template-rows: 0fr;
+  overflow: hidden;
   transition: grid-template-rows 220ms ease;
 }
 
 .panelOpen {
-  // Открытое состояние: показываем ответ внутри того же пункта.
+  // Открытое состояние: даём место под ответ примерно на 3 строки.
   grid-template-rows: 1fr;
 }
 
-.answer {
-  // Ответ рассчитан примерно на 3 строки на desktop.
+.panelInner {
   min-height: 0;
   overflow: hidden;
-  margin: 0;
-  padding: 0 20px 16px;
+}
 
-  max-width: 880px;
+.answer {
+  margin: 0;
+  padding: 0 20px 18px;
+  max-width: 920px;
+
   font-family: Manrope, sans-serif;
   font-size: 15px;
   line-height: 22px;
@@ -130,7 +126,6 @@
 }
 
 .visuallyHidden {
-  // Скрытый заголовок для доступности.
   position: absolute;
   width: 1px;
   height: 1px;
@@ -164,7 +159,7 @@
   }
 
   .answer {
-    padding: 0 18px 16px;
+    padding: 0 18px 18px;
     max-width: 100%;
   }
 }
@@ -200,7 +195,7 @@
   }
 
   .trigger {
-    min-height: 44px;
+    min-height: 46px;
     padding: 14px 16px;
     gap: 12px;
   }
@@ -218,8 +213,8 @@
 
   .answer {
     padding: 0 16px 16px;
+    max-width: 100%;
     font-size: 15px;
     line-height: 22px;
-    max-width: 100%;
   }
 }
