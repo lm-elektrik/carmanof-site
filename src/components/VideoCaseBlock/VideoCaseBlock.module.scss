@@ -1,0 +1,397 @@
+.section {
+  /*
+    Внешний вертикальный ритм блока.
+    Подгоняется под соседние секции.
+  */
+  margin: 96px 0;
+}
+
+.wrapper {
+  width: 100%;
+  max-width: 1200px;
+  min-height: 420px; /* уменьшили общую высоту блока */
+  margin: 0 auto;
+
+  /*
+    Внутренний воздух блока.
+  */
+  padding: 24px 8px 28px;
+
+  background: #fbfaf7;
+  border: 1px solid #e4ded3;
+  border-radius: 28px;
+}
+
+.title {
+  margin: 0 0 16px;
+
+  text-align: center;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  color: #1d1f23;
+}
+
+.description {
+  margin: 0 0 24px;
+
+  text-align: center;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #1d1f23;
+  opacity: 0.82;
+}
+
+/*
+  ВАЖНО:
+  3 карточки в 1 строку на desktop.
+*/
+.cards {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: 25px;
+
+  margin-bottom: 26px;
+  padding: 0 8px;
+
+  flex-wrap: nowrap; /* строго одна строка на desktop */
+}
+
+.card {
+  width: 378px;
+  flex: 0 0 378px; /* фиксированная ширина, не сжимается */
+
+  /*
+    Карточка теперь = только рамка вокруг превью.
+  */
+  padding: 8px;
+
+  background: #ffffff;
+  border-radius: 20px;
+
+  box-shadow:
+    0 8px 24px rgba(17, 24, 39, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45);
+
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 12px 30px rgba(17, 24, 39, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+
+.previewButton {
+  position: relative;
+  width: 100%;
+  height: 203px; /* высота самого превью */
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  display: block;
+  overflow: hidden;
+  border-radius: 16px;
+
+  /*
+    Общая глубина для всех превью.
+  */
+  background-color: #1f2329;
+}
+
+/* =========================
+   АВТО-ТЕМАТИЧЕСКИЕ ПРЕВЬЮ
+   ========================= */
+
+.themeBmw {
+  background:
+    radial-gradient(
+      circle at 26% 40%,
+      rgba(61, 104, 255, 0.28),
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at 78% 28%,
+      rgba(255, 255, 255, 0.14),
+      transparent 26%
+    ),
+    linear-gradient(135deg, #0f1725 0%, #19263c 42%, #22385c 100%);
+}
+
+.themeAudi {
+  background:
+    radial-gradient(
+      circle at 28% 26%,
+      rgba(255, 72, 72, 0.24),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at 72% 70%,
+      rgba(255, 255, 255, 0.08),
+      transparent 24%
+    ),
+    linear-gradient(135deg, #17181b 0%, #26282d 45%, #34363c 100%);
+}
+
+.themeMercedes {
+  background:
+    radial-gradient(
+      circle at 76% 24%,
+      rgba(82, 174, 255, 0.24),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at 24% 74%,
+      rgba(255, 255, 255, 0.1),
+      transparent 30%
+    ),
+    linear-gradient(135deg, #10171d 0%, #1a2732 48%, #243847 100%);
+}
+
+/*
+  Затемняющий слой для премиальной глубины.
+*/
+.previewOverlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 32%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.02), rgba(0, 0, 0, 0.22));
+  transition: opacity 0.22s ease;
+}
+
+/*
+  Мягкое внутреннее свечение.
+*/
+.previewGlow {
+  position: absolute;
+  inset: auto auto -10% -8%;
+  width: 60%;
+  height: 70%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.12),
+    transparent 70%
+  );
+  filter: blur(18px);
+  pointer-events: none;
+}
+
+/*
+  Дуги приборной панели — левый и правый элементы.
+*/
+.previewArcLeft,
+.previewArcRight {
+  position: absolute;
+  bottom: -54px;
+  width: 170px;
+  height: 170px;
+  border-radius: 50%;
+  border: 12px solid rgba(255, 255, 255, 0.16);
+  pointer-events: none;
+}
+
+.previewArcLeft {
+  left: 14px;
+  border-right-color: transparent;
+  border-bottom-color: transparent;
+  transform: rotate(10deg);
+}
+
+.previewArcRight {
+  right: 14px;
+  border-left-color: transparent;
+  border-bottom-color: transparent;
+  transform: rotate(-10deg);
+}
+
+/*
+  Текст внутри превью.
+*/
+.previewMeta {
+  position: absolute;
+  left: 18px;
+  top: 16px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  text-align: left;
+  color: rgba(255, 255, 255, 0.96);
+  z-index: 1;
+}
+
+.previewMetaTop {
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  opacity: 0.78;
+}
+
+.previewMetaBottom {
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.playButton {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  z-index: 2;
+}
+
+.playIcon {
+  width: 96px;
+  height: 96px;
+  display: block;
+  transition:
+    transform 0.22s ease,
+    opacity 0.22s ease;
+}
+
+.previewButton:hover .previewOverlay {
+  opacity: 0.88;
+}
+
+.previewButton:hover .playIcon {
+  transform: scale(1.03);
+}
+
+.iframe {
+  width: 100%;
+  height: 203px;
+  border: 0;
+  display: block;
+  border-radius: 16px;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+}
+
+/* =========================
+   TABLET
+   ========================= */
+@media (max-width: 1200px) {
+  .cards {
+    justify-content: center;
+    flex-wrap: wrap; /* на tablet уже можно переносить */
+  }
+
+  .card {
+    width: calc(50% - 13px);
+    flex: 0 0 calc(50% - 13px);
+    min-width: 320px;
+  }
+
+  .previewButton,
+  .iframe {
+    height: 210px;
+  }
+}
+
+@media (max-width: 960px) {
+  .section {
+    margin: 72px 0;
+  }
+
+  .wrapper {
+    min-height: auto;
+    padding: 20px 12px 24px;
+    border-radius: 24px;
+  }
+
+  .title {
+    font-size: 28px;
+  }
+
+  .card {
+    width: 100%;
+    flex: 0 0 100%;
+    max-width: 560px;
+  }
+
+  .previewArcLeft,
+  .previewArcRight {
+    width: 150px;
+    height: 150px;
+  }
+}
+
+/* =========================
+   MOBILE
+   ========================= */
+@media (max-width: 640px) {
+  .section {
+    margin: 56px 0;
+  }
+
+  .wrapper {
+    padding: 18px 10px 20px;
+    border-radius: 22px;
+  }
+
+  .title {
+    font-size: 24px;
+  }
+
+  .description {
+    font-size: 15px;
+    margin-bottom: 20px;
+  }
+
+  .cards {
+    gap: 16px;
+    padding: 0 4px;
+    margin-bottom: 20px;
+  }
+
+  .card {
+    min-width: 0;
+    max-width: none;
+    border-radius: 18px;
+  }
+
+  .previewButton,
+  .iframe {
+    height: 190px;
+    border-radius: 16px;
+  }
+
+  .playIcon {
+    width: 76px;
+    height: 76px;
+  }
+
+  .previewMeta {
+    left: 14px;
+    top: 14px;
+  }
+
+  .previewMetaBottom {
+    font-size: 18px;
+  }
+
+  .previewArcLeft,
+  .previewArcRight {
+    width: 130px;
+    height: 130px;
+    border-width: 10px;
+  }
+}
