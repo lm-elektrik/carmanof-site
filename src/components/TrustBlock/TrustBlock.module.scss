@@ -1,0 +1,182 @@
+.section {
+  // Единый вертикальный ритм между секциями страницы.
+  margin: 96px 0;
+}
+
+.container {
+  // Основной контейнер блока:
+  // ширина 1200, фон как в MainOffer, скругление 28 в едином стиле.
+  width: min(1200px, calc(100vw - 32px));
+  min-height: 292px;
+  margin: 0 auto;
+  border-radius: 28px;
+  background: #efeae1;
+  overflow: hidden;
+}
+
+.content {
+  // Внутренний контейнер:
+  // 1200 - 40 - 40 = 1120 полезной ширины.
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px 40px 24px;
+}
+
+.textBlock {
+  // Верхняя текстовая часть стала компактнее,
+  // потому что убрали служебный eyebrow "ДОВЕРИЕ".
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  max-width: 620px;
+}
+
+.title {
+  margin: 0;
+  font-family: Manrope, sans-serif;
+  font-size: 32px;
+  line-height: 36px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: #1d1f23;
+}
+
+.description {
+  margin: 0;
+  max-width: 620px;
+  font-family: Manrope, sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+  color: rgba(29, 31, 35, 0.72);
+}
+
+.cards {
+  // Сетка карточек на desktop.
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.card {
+  // Карточки сделали почти белыми, чтобы лучше читались на фоне блока.
+  min-height: 164px;
+  padding: 16px 18px 18px;
+  border-radius: 20px;
+  background: #fcfbf8;
+  border: 1px solid rgba(29, 31, 35, 0.06);
+}
+
+.iconWrap {
+  // Обёртка под svg-иконку.
+  // Держим фиксированный размер, чтобы все карточки имели одинаковый ритм.
+  width: 64px;
+  height: 64px;
+  margin-bottom: 14px;
+}
+
+.icon {
+  display: block;
+  width: 64px;
+  height: 64px;
+}
+
+.cardTitle {
+  margin: 0 0 10px;
+  font-family: Manrope, sans-serif;
+  font-size: 22px;
+  line-height: 26px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: #1d1f23;
+}
+
+.cardDescription {
+  margin: 0;
+  font-family: Manrope, sans-serif;
+  font-size: 15px;
+  line-height: 22px;
+  font-weight: 400;
+  color: rgba(29, 31, 35, 0.72);
+}
+
+@media (max-width: 1279px) {
+  .container {
+    width: calc(100vw - 32px);
+    min-height: unset;
+  }
+
+  .content {
+    padding: 24px 32px;
+  }
+
+  .cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .card {
+    min-height: 176px;
+  }
+}
+
+@media (max-width: 767px) {
+  .section {
+    margin: 96px 0;
+  }
+
+  .container {
+    width: calc(100vw - 24px);
+    border-radius: 24px;
+  }
+
+  .content {
+    gap: 20px;
+    padding: 20px;
+  }
+
+  .textBlock {
+    gap: 10px;
+    max-width: 100%;
+  }
+
+  .title {
+    font-size: 28px;
+    line-height: 32px;
+  }
+
+  .description {
+    max-width: 100%;
+    font-size: 16px;
+    line-height: 24px;
+  }
+
+  .cards {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .card {
+    min-height: unset;
+    padding: 16px;
+    border-radius: 18px;
+  }
+
+  .iconWrap,
+  .icon {
+    width: 56px;
+    height: 56px;
+  }
+
+  .cardTitle {
+    font-size: 20px;
+    line-height: 24px;
+  }
+
+  .cardDescription {
+    font-size: 15px;
+    line-height: 22px;
+  }
+}

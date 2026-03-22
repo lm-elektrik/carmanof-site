@@ -5,6 +5,11 @@ import AdditionalElements from "@/components/AdditionalElements/AdditionalElemen
 import VideoCaseBlock from "@/components/VideoCaseBlock/VideoCaseBlock";
 import MoreExamplesBlock from "@/components/MoreExamplesBlock/MoreExamplesBlock";
 import ProcessBlock from "@/components/ProcessBlock/ProcessBlock";
+import TrustBlock from "@/components/TrustBlock/TrustBlock";
+import Prices from "@/components/Prices/Prices";
+import FAQ from "@/components/FAQ/FAQ";
+import Contact from "@/components/Contact/Contact";
+import Footer from "@/components/Footer/Footer";
 
 export default function HomePage() {
   return (
@@ -16,6 +21,11 @@ export default function HomePage() {
       <VideoCaseBlock />
       <MoreExamplesBlock />
       <ProcessBlock />
+      <TrustBlock />
+      <Prices />
+      <FAQ />
+      <Contact />
+      <Footer />
     </>
   );
 }
