@@ -2,3 +2,6 @@ tree src /F  - структура проекта от папки src
 
 npm run start
 
+git add . && git commit -m "Refactor layout..." && git push origin main - все одной строкой
+
+border: 1px solid rgba(221, 214, 203, 0.35); - мягкая обводка вместо:border: 1px solid #e8e3dc;

@@ -1,233 +1,80 @@
 .header {
-  /*
-    Отступ сверху от края страницы.
-    Подгонишь позже по общему ритму сайта, если понадобится.
-  */
-  padding-top: 48px;
+  position: sticky;
+  top: 12px;
+  z-index: 100;
+  width: 100%;
 }
 
 .wrapper {
-  /*
-    Основной контейнер:
-    1200 x 80
-  */
   width: 100%;
-  max-width: 1200px;
-  min-height: 80px;
-
-  border: 1px solid #e8e3d9;
-  border-radius: 22px;
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.3) 0%,
-      rgba(255, 255, 255, 0) 34%
-    ),
-    #fbfaf7;
-
-  /*
-    Очень мягкая глубина, чтобы хедер был в системе сайта.
-  */
-  box-shadow:
-    0 10px 24px rgba(29, 31, 35, 0.035),
-    inset 0 1px 0 rgba(255, 255, 255, 0.42);
-
-  overflow: hidden;
 }
 
 .inner {
-  /*
-    Контейнер под контент:
-    1120 x 64
-  */
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
 
-  width: 100%;
-  min-height: 64px;
-  padding: 8px 40px;
+  height: 64px;
+  padding: 0 20px;
+
+  border-radius: 28px;
+
+  background: rgba(255, 255, 255, 1);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
 }
 
 .logo {
-  /*
-    Левая колонка: лого 64 x 64
-  */
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  justify-content: center;
-  flex: 0 0 64px;
-
-  width: 64px;
-  height: 64px;
-
   text-decoration: none;
 }
 
 .logoImage {
   display: block;
-  width: 64px;
-  height: 64px;
+  width: 48px;
+  height: 48px;
   object-fit: contain;
 }
 
-.nav {
-  /*
-    Центральная колонка
-  */
-  display: flex;
-  justify-content: center;
-  flex: 1;
-  min-width: 0;
-}
-
 .list {
-  /*
-    Меню контейнер:
-    логика Auto Layout через flex
-  */
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 24px;
-
+  gap: 32px;
+  list-style: none;
   margin: 0;
   padding: 0;
-  list-style: none;
-}
-
-.item {
-  display: flex;
-  align-items: center;
 }
 
 .action {
-  /*
-    Правая колонка
-  */
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  flex: 0 0 auto;
 }
 
 .button {
-  /*
-    Кнопка:
-    130 x 44
-  */
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
-  min-width: 130px;
-  height: 44px;
-  padding: 0 18px;
+  height: 36px;
+  padding: 0 20px;
 
-  border-radius: 14px;
-  background: #6c88b5;
-
-  font-family: var(--font-manrope), sans-serif;
-  font-size: 12px;
-  line-height: 1;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  color: #ffffff;
+  border-radius: 999px;
+  background: #6c88b5 !important; // фикс конфликта
+  color: #fff;
   text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
 
   transition:
     transform 0.2s ease,
-    opacity 0.2s ease,
-    box-shadow 0.2s ease;
+    opacity 0.2s ease;
 }
 
 .button:hover {
-  opacity: 0.96;
   transform: translateY(-1px);
-  box-shadow: 0 10px 18px rgba(108, 136, 181, 0.18);
-}
-
-/* =========================
-   TABLET
-   ========================= */
-@media (max-width: 1240px) {
-  .inner {
-    padding: 8px 24px;
-  }
-
-  .list {
-    gap: 18px;
-  }
-}
-
-@media (max-width: 1024px) {
-  .header {
-    padding-top: 32px;
-  }
-
-  .wrapper {
-    min-height: auto;
-  }
-
-  .inner {
-    gap: 18px;
-    padding: 16px 20px;
-  }
-
-  .list {
-    gap: 14px;
-  }
-
-  .button {
-    min-width: 122px;
-  }
-}
-
-/* =========================
-   MOBILE
-   ========================= */
-@media (max-width: 768px) {
-  .inner {
-    flex-wrap: wrap;
-    row-gap: 16px;
-    padding: 16px;
-  }
-
-  .nav {
-    order: 3;
-    flex: 0 0 100%;
-    justify-content: flex-start;
-  }
-
-  .list {
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    gap: 12px 16px;
-  }
-
-  .logo {
-    width: 56px;
-    height: 56px;
-    flex-basis: 56px;
-  }
-
-  .logoImage {
-    width: 56px;
-    height: 56px;
-  }
-}
-
-@media (max-width: 640px) {
-  .header {
-    padding-top: 20px;
-  }
-
-  .wrapper {
-    border-radius: 18px;
-  }
-
-  .button {
-    min-width: 100%;
-  }
+  opacity: 0.9;
 }

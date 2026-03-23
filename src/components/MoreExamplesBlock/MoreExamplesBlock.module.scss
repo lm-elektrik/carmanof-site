@@ -1,157 +1,129 @@
 .section {
-  // Блок остаётся в общем ритме страницы,
-  // но по характеру он тише и легче соседних секций.
-  margin: 96px 0;
+  padding: 40px 0 80px;
 }
 
 .container {
-  width: min(1200px, calc(100vw - 32px));
+  max-width: 1200px;
   margin: 0 auto;
 }
 
-.grid {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+.galleryShell {
+  padding: 8px;
+  border-radius: 32px;
+  background: #efebe4;
+
+  /* Сглаживание краёв контейнера для более мягкого "apple-like" ощущения */
+  overflow: hidden;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
 }
 
-.rowTop {
+.gridTop,
+.gridBottom {
   display: grid;
+  gap: 8px;
+}
+
+.gridTop {
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
+  margin-bottom: 8px;
 }
 
-.rowBottom {
-  display: grid;
+.gridBottom {
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
 }
 
 .card {
   position: relative;
-  width: 100%;
-  border: 0;
-  padding: 0;
-  border-radius: 18px;
   overflow: hidden;
-  background: #f7f4ee;
+  border: none;
+  padding: 0;
+  width: 100%;
+  display: block;
   cursor: pointer;
+  background: #d9d9d9;
+  border-radius: 30px;
+
+  /* Делает скругление визуально чище на изображениях */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
 }
 
 .cardTop {
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 588 / 330;
 }
 
 .cardBottom {
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 389 / 280;
 }
 
 .image {
   object-fit: cover;
-  transition: transform 180ms ease;
+  transition: transform 0.35s ease;
+
+  /* Важно для fill-изображений, чтобы не было визуальных артефактов по углам */
+  transform: scale(1.001);
 }
 
 .card:hover .image {
-  transform: scale(1.02);
-}
-
-.modal {
-  position: fixed;
-  inset: 0;
-  z-index: 120;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  background: rgba(29, 31, 35, 0.84);
-}
-
-.modalContent {
-  position: relative;
-  width: min(1200px, calc(100vw - 48px));
-  aspect-ratio: 16 / 10;
-  border-radius: 20px;
-  overflow: hidden;
-  background: #111;
-}
-
-.modalImage {
-  object-fit: contain;
-  background: #111;
-}
-
-.closeButton {
-  position: absolute;
-  top: 18px;
-  right: 18px;
-  z-index: 121;
-  width: 40px;
-  height: 40px;
-  border: 0;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.14);
-  color: #fcfbf8;
-  font-family: Manrope, sans-serif;
-  font-size: 24px;
-  line-height: 1;
-  cursor: pointer;
+  transform: scale(1.03);
 }
 
 @media (max-width: 1279px) {
+  .section {
+    padding: 32px 0 72px;
+  }
+
   .container {
-    width: calc(100vw - 32px);
-  }
-
-  .rowTop,
-  .rowBottom {
-    gap: 14px;
-  }
-
-  .rowBottom {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    padding: 0 20px;
   }
 }
 
-@media (max-width: 767px) {
-  .section {
-    margin: 96px 0;
-  }
-
-  .container {
-    width: calc(100vw - 24px);
-  }
-
-  .grid {
-    gap: 12px;
-  }
-
-  .rowTop,
-  .rowBottom {
+@media (max-width: 991px) {
+  .gridTop {
     grid-template-columns: 1fr;
-    gap: 12px;
+  }
+
+  .gridBottom {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .cardTop,
   .cardBottom {
-    aspect-ratio: 4 / 3;
-    border-radius: 16px;
+    aspect-ratio: 16 / 10;
+  }
+}
+
+@media (max-width: 640px) {
+  .section {
+    padding: 24px 0 56px;
   }
 
-  .modal {
-    padding: 16px;
+  .container {
+    padding: 0 16px;
   }
 
-  .modalContent {
-    width: calc(100vw - 32px);
-    aspect-ratio: 4 / 3;
-    border-radius: 16px;
+  .galleryShell {
+    padding: 6px;
+    border-radius: 28px;
   }
 
-  .closeButton {
-    top: 12px;
-    right: 12px;
-    width: 36px;
-    height: 36px;
-    font-size: 22px;
+  .gridTop,
+  .gridBottom {
+    gap: 6px;
+  }
+
+  .gridTop {
+    margin-bottom: 6px;
+  }
+
+  .gridBottom {
+    grid-template-columns: 1fr;
+  }
+
+  .card {
+    border-radius: 26px;
   }
 }
