@@ -5,7 +5,6 @@
 
 .container {
   // Основной CTA-контейнер.
-  // Оставляем его акцентным, но не слишком кричащим по тону.
   width: min(1200px, calc(100vw - 32px));
   margin: 0 auto;
   border-radius: 28px;
@@ -37,8 +36,7 @@
 }
 
 .bottom {
-  // Нижняя зона делится на 2 большие части:
-  // слева бренд + форма, справа мессенджеры/режим + QR.
+  // Слева бренд + форма, справа мессенджеры/режим + QR.
   display: grid;
   grid-template-columns: minmax(0, 1.2fr) minmax(360px, 460px);
   gap: 24px;
@@ -46,18 +44,17 @@
 }
 
 .leftArea {
-  // Левая зона собирает бренд и форму в один понятный блок.
   display: flex;
   flex-direction: column;
   gap: 18px;
   min-height: 150px;
-  justify-content: space-between;
+  justify-content: flex-start;
+  padding-bottom: 8px;
 }
 
 .brandArea {
-  // Логотип сидит в верхней левой зоне как фирменный акцент,
-  // а не как полноценный крупный герой блока.
   display: flex;
+  justify-content: flex-start;
   align-items: flex-start;
 }
 
@@ -74,7 +71,6 @@
 }
 
 .form {
-  // Форма строится в одну строку на desktop.
   display: grid;
   grid-template-columns: minmax(180px, 1fr) minmax(260px, 1.25fr) 126px;
   gap: 14px;
@@ -100,6 +96,68 @@
   color: rgba(29, 31, 35, 0.38);
 }
 
+.phoneField {
+  display: flex;
+  align-items: center;
+  height: 46px;
+  border-radius: 16px;
+  background: #fcfbf8;
+  overflow: hidden;
+
+  transition:
+    background-color 180ms ease,
+    color 180ms ease;
+}
+
+.phoneFieldSuccess {
+  background: #27ae60;
+}
+
+.phonePrefix {
+  flex: 0 0 auto;
+  padding: 0 12px 0 16px;
+
+  font-family: Manrope, sans-serif;
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 500;
+  color: #1d1f23;
+  white-space: nowrap;
+
+  transition: color 180ms ease;
+}
+
+.phoneFieldSuccess .phonePrefix {
+  color: rgba(255, 255, 255, 0.96);
+}
+
+.phoneInput {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding-left: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.phoneInput::placeholder {
+  color: rgba(29, 31, 35, 0.28);
+}
+
+.phoneSuccessMessage {
+  display: inline-flex;
+  align-items: center;
+  flex: 1 1 auto;
+  min-width: 0;
+  padding-right: 14px;
+
+  font-family: Manrope, sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+  color: #ffffff;
+  white-space: nowrap;
+}
+
 .button {
   height: 46px;
   border: 0;
@@ -115,20 +173,54 @@
 
   transition:
     background-color 180ms ease,
-    transform 180ms ease;
+    transform 180ms ease,
+    opacity 180ms ease;
 }
 
-.button:hover {
+.button:hover:not(:disabled) {
   background: #6382ba;
 }
 
-.button:active {
+.button:active:not(:disabled) {
   transform: translateY(1px);
 }
 
+.button:disabled {
+  background: rgba(252, 251, 248, 0.16);
+  color: rgba(252, 251, 248, 0.55);
+  cursor: not-allowed;
+  transform: none;
+}
+
+.formNote {
+  margin: 10px 0 0;
+
+  font-family: Manrope, sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+  color: rgba(29, 31, 35, 0.72);
+}
+
+.checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 10px;
+
+  font-family: Manrope, sans-serif;
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 400;
+  color: rgba(29, 31, 35, 0.7);
+
+  input {
+    margin-top: 3px;
+    flex: 0 0 auto;
+  }
+}
+
 .rightArea {
-  // Правая часть теперь единый кластер:
-  // слева внутри него иконки + режим, справа QR.
   display: grid;
   grid-template-columns: 1fr 124px;
   gap: 20px;
@@ -226,7 +318,6 @@
 }
 
 .visuallyHidden {
-  // Скрытые label для доступности формы.
   position: absolute;
   width: 1px;
   height: 1px;
@@ -256,6 +347,7 @@
 
   .leftArea {
     min-height: unset;
+    padding-bottom: 0;
   }
 
   .rightArea {
@@ -307,13 +399,24 @@
   }
 
   .input,
-  .button {
+  .button,
+  .phoneField {
     height: 46px;
     border-radius: 14px;
   }
 
   .button {
     width: 100%;
+  }
+
+  .phoneSuccessMessage {
+    font-size: 13px;
+    line-height: 18px;
+  }
+
+  .formNote {
+    font-size: 13px;
+    line-height: 18px;
   }
 
   .rightArea {

@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import styles from "./Contact.module.scss";
 
@@ -14,7 +17,111 @@ const messengerItems = [
   },
 ];
 
+function isPhoneObviouslyFake(phoneDigits: string) {
+  if (phoneDigits.length !== 10) return true;
+
+  // Все цифры одинаковые: 0000000000, 1111111111 и т.д.
+  if (/^(\d)\1{9}$/.test(phoneDigits)) return true;
+
+  // Российский номер после +7 не должен начинаться с 0
+  if (phoneDigits.startsWith("0")) return true;
+
+  // Совсем очевидные тестовые/фейковые последовательности
+  if (
+    phoneDigits === "1234567890" ||
+    phoneDigits === "0123456789" ||
+    phoneDigits === "9876543210"
+  ) {
+    return true;
+  }
+
+  return false;
+}
+
+function normalizePhoneInput(rawValue: string) {
+  const digitsOnly = rawValue.replace(/\D/g, "");
+
+  // Нормальный случай автоподстановки: 79991234567 или 89991234567
+  if (
+    digitsOnly.length === 11 &&
+    (digitsOnly.startsWith("7") || digitsOnly.startsWith("8"))
+  ) {
+    return digitsOnly.slice(1);
+  }
+
+  // Если пришёл слишком длинный номер/строка с мусором — берём последние 10 цифр
+  if (digitsOnly.length > 10) {
+    return digitsOnly.slice(-10);
+  }
+
+  // Если пользователь ещё вводит номер вручную
+  return digitsOnly;
+}
+
+function formatPhoneDigits(phoneDigits: string) {
+  const part1 = phoneDigits.slice(0, 3);
+  const part2 = phoneDigits.slice(3, 6);
+  const part3 = phoneDigits.slice(6, 8);
+  const part4 = phoneDigits.slice(8, 10);
+
+  return [part1, part2, part3, part4].filter(Boolean).join(" ");
+}
+
 export default function Contact() {
+  const [phoneDigits, setPhoneDigits] = useState("");
+  const [name, setName] = useState("");
+  const [isChecked, setIsChecked] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  useEffect(() => {
+    if (!isSuccess) return;
+
+    const timerId = window.setTimeout(() => {
+      setIsSuccess(false);
+    }, 2500);
+
+    return () => {
+      window.clearTimeout(timerId);
+    };
+  }, [isSuccess]);
+
+  const isPhoneValid = useMemo(() => {
+    return phoneDigits.length === 10 && !isPhoneObviouslyFake(phoneDigits);
+  }, [phoneDigits]);
+
+  const isFormValid = isPhoneValid && isChecked;
+
+  function handlePhoneChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const normalizedDigits = normalizePhoneInput(event.target.value);
+    setPhoneDigits(normalizedDigits);
+  }
+
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if (!isFormValid) return;
+
+    const fullPhone = `+7${phoneDigits}`;
+    const submissionPayload = {
+      subject: 'Заявка с сайта "Карманов"',
+      name: name.trim() || "Не указано",
+      phone: fullPhone,
+      consentAccepted: true,
+      source: "Форма контактов на сайте",
+      submittedAt: new Date().toLocaleString("ru-RU"),
+    };
+
+    // Здесь будет реальная отправка в API / на почту.
+    // Пока оставляем подготовленный payload в лог, чтобы не ломать текущую структуру.
+    console.log(submissionPayload);
+
+    // Очищаем форму и показываем success-state прямо в поле телефона
+    setName("");
+    setPhoneDigits("");
+    setIsChecked(false);
+    setIsSuccess(true);
+  }
+
   return (
     <section
       id="contact"
@@ -34,9 +141,8 @@ export default function Contact() {
             <div className={styles.leftArea}>
               <div className={styles.brandArea}>
                 <Image
-                  // Положите сюда тёмную / инвертированную версию логотипа из интро.
                   src="/icons/contact/cta-logo.svg"
-                  alt="Логотип"
+                  alt="Логотип Карманов"
                   width={220}
                   height={72}
                   className={styles.brandLogo}
@@ -45,7 +151,7 @@ export default function Contact() {
               </div>
 
               <div className={styles.formArea}>
-                <form className={styles.form} action="#" method="post">
+                <form className={styles.form} onSubmit={handleSubmit}>
                   <label
                     className={styles.visuallyHidden}
                     htmlFor="contact-name"
@@ -59,6 +165,8 @@ export default function Contact() {
                     placeholder="Ваше имя"
                     className={styles.input}
                     autoComplete="name"
+                    value={name}
+                    onChange={(event) => setName(event.target.value)}
                   />
 
                   <label
@@ -67,19 +175,55 @@ export default function Contact() {
                   >
                     Номер телефона
                   </label>
-                  <input
-                    id="contact-phone"
-                    name="phone"
-                    type="tel"
-                    placeholder="+7 номер телефона без “8”"
-                    className={styles.input}
-                    autoComplete="tel"
-                  />
 
-                  <button type="submit" className={styles.button}>
+                  <div
+                    className={`${styles.phoneField} ${
+                      isSuccess ? styles.phoneFieldSuccess : ""
+                    }`}
+                  >
+                    <span className={styles.phonePrefix}>+7&nbsp;|</span>
+
+                    {isSuccess ? (
+                      <span className={styles.phoneSuccessMessage}>
+                        ✓ Ваша заявка принята
+                      </span>
+                    ) : (
+                      <input
+                        id="contact-phone"
+                        name="phone"
+                        type="tel"
+                        inputMode="numeric"
+                        autoComplete="tel"
+                        placeholder="999 123 45 67"
+                        className={`${styles.input} ${styles.phoneInput}`}
+                        value={formatPhoneDigits(phoneDigits)}
+                        onChange={handlePhoneChange}
+                        aria-invalid={phoneDigits.length > 0 && !isPhoneValid}
+                      />
+                    )}
+                  </div>
+
+                  <button
+                    type="submit"
+                    className={styles.button}
+                    disabled={!isFormValid}
+                  >
                     Отправить
                   </button>
                 </form>
+
+                <label className={styles.checkbox}>
+                  <input
+                    type="checkbox"
+                    checked={isChecked}
+                    onChange={(event) => setIsChecked(event.target.checked)}
+                  />
+                  <span>Даю согласие на обработку персональных данных</span>
+                </label>
+
+                <p className={styles.formNote}>
+                  Ответим в рабочее время и подскажем лучший вариант.
+                </p>
               </div>
             </div>
 

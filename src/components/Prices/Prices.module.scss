@@ -1,6 +1,8 @@
 .section {
   // Единый вертикальный ритм между секциями страницы.
   margin: 96px 0;
+  /* offset для якорного скролла (header + отступ + ритм) */
+  scroll-margin-top: 172px;
 }
 
 .container {

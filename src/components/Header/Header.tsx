@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import Container from "@/components/ui/Container/Container";
 import { useCallback } from "react";
+import { usePathname } from "next/navigation";
 
 /* Навигация */
 const navItems = [
@@ -18,6 +19,8 @@ const navItems = [
 const SCROLL_OFFSET = 172;
 
 export default function Header() {
+  const pathname = usePathname();
+
   /* Скролл с учетом offset */
   const handleScroll = useCallback(
     (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
@@ -39,9 +42,13 @@ export default function Header() {
     [],
   );
 
-  /* Скролл в самое начало страницы */
-  const handleScrollTop = useCallback(
+  /* Логотип:
+     - на главной скроллит в самое начало
+     - на внутренних страницах не блокирует переход на "/" */
+  const handleLogoClick = useCallback(
     (e: React.MouseEvent<HTMLAnchorElement>) => {
+      if (pathname !== "/") return;
+
       e.preventDefault();
 
       window.scrollTo({
@@ -49,7 +56,7 @@ export default function Header() {
         behavior: "smooth",
       });
     },
-    [],
+    [pathname],
   );
 
   return (
@@ -57,12 +64,12 @@ export default function Header() {
       <Container>
         <div className={styles.wrapper}>
           <div className={styles.inner}>
-            {/* Логотип → скролл вверх */}
+            {/* Логотип → на главной скролл вверх, на внутренних страницах переход на главную */}
             <Link
               href="/"
               className={styles.logo}
               aria-label="На главную"
-              onClick={handleScrollTop}
+              onClick={handleLogoClick}
             >
               <Image
                 src="/images/logo.svg"
@@ -77,26 +84,39 @@ export default function Header() {
             {/* Навигация */}
             <nav className={styles.nav} aria-label="Основная навигация">
               <ul className={styles.list}>
-                {navItems.map((item) => (
-                  <li key={item.href} className={styles.item}>
-                    <Link
-                      href={item.href}
-                      className="link-primary"
-                      onClick={(e) => handleScroll(e, item.href)}
-                    >
-                      {item.label}
-                    </Link>
-                  </li>
-                ))}
+                {navItems.map((item) => {
+                  const linkHref =
+                    pathname === "/" ? item.href : `/${item.href}`;
+
+                  return (
+                    <li key={item.href} className={styles.item}>
+                      <Link
+                        href={linkHref}
+                        className="link-primary"
+                        onClick={
+                          pathname === "/"
+                            ? (e) => handleScroll(e, item.href)
+                            : undefined
+                        }
+                      >
+                        {item.label}
+                      </Link>
+                    </li>
+                  );
+                })}
               </ul>
             </nav>
 
             {/* CTA */}
             <div className={styles.action}>
               <Link
-                href="#contact"
+                href={pathname === "/" ? "#contact" : "/#contact"}
                 className={styles.button}
-                onClick={(e) => handleScroll(e, "#contact")}
+                onClick={
+                  pathname === "/"
+                    ? (e) => handleScroll(e, "#contact")
+                    : undefined
+                }
               >
                 Оставить заявку
               </Link>

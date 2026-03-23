@@ -16,6 +16,7 @@
   overflow: hidden;
   transform: translateZ(0);
   backface-visibility: hidden;
+  mask-image: radial-gradient(white, black);
   -webkit-mask-image: -webkit-radial-gradient(white, black);
 }
 
@@ -48,6 +49,7 @@
   /* Делает скругление визуально чище на изображениях */
   transform: translateZ(0);
   backface-visibility: hidden;
+  mask-image: radial-gradient(white, black);
   -webkit-mask-image: -webkit-radial-gradient(white, black);
 }
 
@@ -69,6 +71,72 @@
 
 .card:hover .image {
   transform: scale(1.03);
+}
+
+/* =========================
+   МОДАЛКА
+   ========================= */
+
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(10, 12, 16, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.modalContent {
+  position: relative;
+  width: 100%;
+  max-width: 1400px;
+  display: flex;
+  justify-content: center;
+}
+
+.modalImageWrapper {
+  position: relative;
+  width: min(92vw, 1400px);
+  height: min(88vh, 900px);
+  border-radius: 28px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.28);
+}
+
+.modalImage {
+  object-fit: contain;
+}
+
+.closeButton {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 201;
+
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  font-size: 30px;
+  line-height: 1;
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease;
+}
+
+.closeButton:hover {
+  transform: scale(1.04);
+  background: rgba(255, 255, 255, 0.18);
 }
 
 @media (max-width: 1279px) {
@@ -93,6 +161,16 @@
   .cardTop,
   .cardBottom {
     aspect-ratio: 16 / 10;
+  }
+
+  .modal {
+    padding: 20px;
+  }
+
+  .modalImageWrapper {
+    width: min(94vw, 1000px);
+    height: min(82vh, 760px);
+    border-radius: 24px;
   }
 }
 
@@ -125,5 +203,23 @@
 
   .card {
     border-radius: 26px;
+  }
+
+  .modal {
+    padding: 16px;
+  }
+
+  .modalImageWrapper {
+    width: 100%;
+    height: min(74vh, 560px);
+    border-radius: 22px;
+  }
+
+  .closeButton {
+    top: 16px;
+    right: 16px;
+    width: 44px;
+    height: 44px;
+    font-size: 28px;
   }
 }

@@ -43,7 +43,7 @@ export default function OtherWorks() {
 
           {/* Кнопка */}
           <div className={styles.actions}>
-            <Button variant="secondary" size="sm">
+            <Button href="/cases" variant="secondary" size="sm">
               Посмотреть примеры работ
             </Button>
           </div>

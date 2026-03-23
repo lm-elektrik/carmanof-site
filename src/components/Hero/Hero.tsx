@@ -81,7 +81,7 @@ export default function Hero() {
                 Узнать подробнее
               </Button>
 
-              <Button href="#works" variant="secondary" size="sm">
+              <Button href="#cases" variant="secondary" size="sm">
                 Смотреть работы
               </Button>
             </div>
