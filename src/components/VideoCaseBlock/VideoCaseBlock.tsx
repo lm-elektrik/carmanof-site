@@ -11,7 +11,6 @@ type VideoTheme = "bmw" | "audi" | "mercedes";
 type VideoCase = {
   id: string;
   title: string;
-  previewText: string;
   youtubeId: string;
   theme: VideoTheme;
 };
@@ -19,23 +18,20 @@ type VideoCase = {
 const videoCases: VideoCase[] = [
   {
     id: "bmw-e60",
-    title: "BMW E60",
-    previewText: "Кастомные шкалы и обновлённый стиль приборной панели",
-    youtubeId: "vBFih1j57ew",
+    title: "Кастомные шкалы BMW E60",
+    youtubeId: "_Mt3SlSkAiM",
     theme: "bmw",
   },
   {
     id: "audi-a4",
-    title: "Audi A4",
-    previewText: "Аккуратный пересвет шкал и чистая визуальная подача",
-    youtubeId: "pOmuehcL2UM",
+    title: "Кастомные шкалы и обновлённый стиль приборной панели",
+    youtubeId: "mrSF0nOEoXg",
     theme: "audi",
   },
   {
     id: "mercedes-w204",
     title: "Mercedes W204",
-    previewText: "Точный тюнинг панели приборов с премиальным внешним видом",
-    youtubeId: "LWFM6YMeiPI",
+    youtubeId: "YQGjh8H50lk",
     theme: "mercedes",
   },
 ];
@@ -93,7 +89,6 @@ export default function VideoCaseBlock() {
                       onClick={() => setActiveVideoId(item.id)}
                       aria-label={`Открыть видео: ${item.title}`}
                     >
-                      {/* Картинка превью берется из самого YouTube-видео */}
                       <img
                         src={getYoutubeThumbnail(item.youtubeId)}
                         alt={item.title}
@@ -106,7 +101,7 @@ export default function VideoCaseBlock() {
 
                       <span className={styles.previewMeta}>
                         <span className={styles.previewMetaBottom}>
-                          {truncateText(item.previewText, PREVIEW_TEXT_LIMIT)}
+                          {truncateText(item.title, PREVIEW_TEXT_LIMIT)}
                         </span>
                       </span>
 
