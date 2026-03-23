@@ -181,7 +181,7 @@ export default function Contact() {
                       isSuccess ? styles.phoneFieldSuccess : ""
                     }`}
                   >
-                    <span className={styles.phonePrefix}>+7&nbsp;|</span>
+                    <span className={styles.phonePrefix}>+7&nbsp;</span>
 
                     {isSuccess ? (
                       <span className={styles.phoneSuccessMessage}>
@@ -228,44 +228,45 @@ export default function Contact() {
             </div>
 
             <div className={styles.rightArea}>
-              <div className={styles.contactInfo}>
-                <div className={styles.messengers}>
-                  {messengerItems.map((item) => (
-                    <a
-                      key={item.name}
-                      href={item.href}
-                      className={styles.messengerLink}
-                      aria-label={item.name}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      <Image
-                        src={item.icon}
-                        alt=""
-                        width={64}
-                        height={64}
-                        className={styles.messengerIcon}
-                        aria-hidden="true"
-                      />
-                    </a>
-                  ))}
-                </div>
+              <div className={styles.workInfo}>
+                <p className={styles.workLabel}>Режим работы</p>
+                <p className={styles.workValue}>Пн – Сб</p>
+                <p className={styles.workValue}>10:00–19:00</p>
+              </div>
 
-                <div className={styles.workInfo}>
-                  <p className={styles.workLabel}>Режим работы</p>
-                  <p className={styles.workValue}>Пн–Сб / 10:00–19:00</p>
-                </div>
+              <div className={styles.messengers}>
+                {messengerItems.map((item) => (
+                  <a
+                    key={item.name}
+                    href={item.href}
+                    className={styles.messengerLink}
+                    aria-label={item.name}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <Image
+                      src={item.icon}
+                      alt=""
+                      width={72}
+                      height={72}
+                      className={styles.messengerIcon}
+                      aria-hidden="true"
+                    />
+                  </a>
+                ))}
               </div>
 
               <div className={styles.qrArea}>
-                <div className={styles.qrBox}>
-                  <Image
-                    src="/icons/contact/QR-Max.webp"
-                    alt="QR-код для быстрого перехода"
-                    width={124}
-                    height={124}
-                    className={styles.qrImage}
-                  />
+                <div className={styles.qrMain}>
+                  <div className={styles.qrBox}>
+                    <Image
+                      src="/icons/contact/QR-Max.webp"
+                      alt="QR-код для быстрого перехода"
+                      width={160}
+                      height={160}
+                      className={styles.qrImage}
+                    />
+                  </div>
                 </div>
 
                 <p className={styles.qrText}>Быстрый переход в мессенджер</p>

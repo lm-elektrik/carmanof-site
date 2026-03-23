@@ -36,11 +36,10 @@
 }
 
 .bottom {
-  // Слева бренд + форма, справа мессенджеры/режим + QR.
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(360px, 460px);
+  grid-template-columns: minmax(0, 1.2fr) 420px;
   gap: 24px;
-  align-items: end;
+  align-items: center;
 }
 
 .leftArea {
@@ -222,46 +221,47 @@
 
 .rightArea {
   display: grid;
-  grid-template-columns: 1fr 124px;
-  gap: 20px;
-  align-items: center;
-  justify-self: end;
-}
-
-.contactInfo {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  justify-content: center;
-  min-height: 124px;
+  grid-template-columns: 120px 80px 160px;
+  gap: 24px;
+  align-items: start;
+  width: 100%;
 }
 
 .messengers {
   display: flex;
-  gap: 12px;
+  flex-direction: column;
+  gap: 16px;
+
+  justify-content: center;
   align-items: center;
+
+  height: 160px;
 }
 
 .messengerLink {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 64px;
-  height: 64px;
-  border-radius: 18px;
+  width: 72px;
+  height: 72px;
+  border-radius: 20px;
   text-decoration: none;
 }
 
 .messengerIcon {
   display: block;
-  width: 64px;
-  height: 64px;
+  width: 72px;
+  height: 72px;
 }
 
 .workInfo {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
+  align-items: start;
+  justify-content: center;
+  text-align: center;
+  height: 160px;
 }
 
 .workLabel {
@@ -288,31 +288,41 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+}
+
+.qrMain {
+  width: 160px;
+  height: 160px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .qrBox {
-  width: 124px;
-  height: 124px;
-  border-radius: 20px;
+  width: 160px;
+  height: 160px;
+  border-radius: 22px;
   overflow: hidden;
   background: #fcfbf8;
 }
 
 .qrImage {
   display: block;
-  width: 124px;
-  height: 124px;
+  width: 160px;
+  height: 160px;
   object-fit: cover;
 }
 
 .qrText {
   margin: 0;
   text-align: center;
+  max-width: 160px;
 
   font-family: Manrope, sans-serif;
-  font-size: 13px;
-  line-height: 17px;
+  font-size: 12px;
+  line-height: 16px;
   font-weight: 400;
   color: rgba(29, 31, 35, 0.68);
 }
@@ -341,7 +351,7 @@
 
   .bottom {
     grid-template-columns: 1fr;
-    gap: 20px;
+    gap: 24px;
     align-items: start;
   }
 
@@ -421,23 +431,20 @@
 
   .rightArea {
     grid-template-columns: 1fr;
-    gap: 18px;
+    gap: 20px;
     justify-self: start;
   }
 
-  .contactInfo {
-    min-height: unset;
-    gap: 14px;
-  }
-
   .messengers {
-    gap: 10px;
+    flex-direction: row;
+    gap: 12px;
+    justify-content: flex-start;
   }
 
   .messengerLink,
   .messengerIcon {
-    width: 56px;
-    height: 56px;
+    width: 60px;
+    height: 60px;
   }
 
   .workLabel {
@@ -450,20 +457,27 @@
     line-height: 21px;
   }
 
+  .workInfo {
+    align-items: flex-start;
+    text-align: left;
+    justify-self: end;
+  }
+
   .qrArea {
     align-items: flex-start;
   }
 
   .qrBox,
   .qrImage {
-    width: 112px;
-    height: 112px;
-    border-radius: 18px;
+    width: 132px;
+    height: 132px;
+    border-radius: 20px;
   }
 
   .qrText {
+    max-width: 132px;
     text-align: left;
-    font-size: 13px;
-    line-height: 18px;
+    font-size: 12px;
+    line-height: 17px;
   }
 }

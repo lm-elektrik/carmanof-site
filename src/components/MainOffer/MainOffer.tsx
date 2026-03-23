@@ -24,7 +24,7 @@ export default function MainOffer() {
 
             <div className={styles.media}>
               <Image
-                src="/images/main-offer/main-offer.webp"
+                src="/images/main-offer/main-offer-v2.webp"
                 alt="Изготовление накладок для шкалы приборов"
                 fill
                 className={styles.image}

@@ -7,11 +7,11 @@ import styles from "./MoreExamplesBlock.module.scss";
 /* Верхний ряд галереи: 2 крупные карточки */
 const topImages = [
   {
-    src: "/images/more-examples/example-01.webp",
+    src: "/images/more-examples/example-01-v2.webp",
     alt: "Пример работы 1",
   },
   {
-    src: "/images/more-examples/example-02.webp",
+    src: "/images/more-examples/example-02-v2.webp",
     alt: "Пример работы 2",
   },
 ];
@@ -19,15 +19,15 @@ const topImages = [
 /* Нижний ряд галереи: 3 карточки */
 const bottomImages = [
   {
-    src: "/images/more-examples/example-03.webp",
+    src: "/images/more-examples/example-03-v2.webp",
     alt: "Пример работы 3",
   },
   {
-    src: "/images/more-examples/example-04.webp",
+    src: "/images/more-examples/example-04-v2.webp",
     alt: "Пример работы 4",
   },
   {
-    src: "/images/more-examples/example-05.webp",
+    src: "/images/more-examples/example-05-v2.webp",
     alt: "Пример работы 5",
   },
 ];

@@ -2,6 +2,25 @@ import styles from "./OtherWorks.module.scss";
 import Container from "@/components/ui/Container/Container";
 import Button from "@/components/ui/Button/Button";
 
+type OtherWorkItem = {
+  title: string;
+  text: string;
+  imageSrc: string;
+};
+
+const otherWorksItems: OtherWorkItem[] = [
+  {
+    title: "Пересвет шкал",
+    text: "Замена штатной подсветки шкал на другой цвет или более яркий вариант.",
+    imageSrc: "/images/other-works/other-work-01.webp",
+  },
+  {
+    title: "Ремонт шкал",
+    text: "Восстановление поврежденных шкал, исправление дефектов и аккуратная замена элементов.",
+    imageSrc: "/images/other-works/other-work-02.webp",
+  },
+];
+
 export default function OtherWorks() {
   return (
     <section className={styles.section}>
@@ -12,33 +31,21 @@ export default function OtherWorks() {
 
           {/* Контент (2 карточки) */}
           <div className={styles.cards}>
-            {/* Карточка 1 */}
-            <div className={styles.card}>
-              <div className={styles.text}>
-                <h3 className={styles.cardTitle}>Пересвет шкал</h3>
+            {otherWorksItems.map((item) => (
+              <div key={item.title} className={styles.card}>
+                <div className={styles.text}>
+                  <h3 className={styles.cardTitle}>{item.title}</h3>
 
-                <p className={styles.cardText}>
-                  Замена штатной подсветки шкал на другой цвет или более яркий
-                  вариант.
-                </p>
+                  <p className={styles.cardText}>{item.text}</p>
+                </div>
+
+                <div
+                  className={styles.image}
+                  style={{ backgroundImage: `url(${item.imageSrc})` }}
+                  aria-hidden="true"
+                />
               </div>
-
-              <div className={styles.image} />
-            </div>
-
-            {/* Карточка 2 */}
-            <div className={styles.card}>
-              <div className={styles.text}>
-                <h3 className={styles.cardTitle}>Ремонт шкал</h3>
-
-                <p className={styles.cardText}>
-                  Восстановление поврежденных шкал, исправление дефектов и
-                  аккуратная замена элементов
-                </p>
-              </div>
-
-              <div className={styles.image} />
-            </div>
+            ))}
           </div>
 
           {/* Кнопка */}

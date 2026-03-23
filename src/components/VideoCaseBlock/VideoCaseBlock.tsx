@@ -18,20 +18,21 @@ type VideoCase = {
 const videoCases: VideoCase[] = [
   {
     id: "bmw-e60",
-    title: "Кастомные шкалы BMW E60",
-    youtubeId: "_Mt3SlSkAiM",
+    title: "ПРИБОРНАЯ ПАНЕЛЬ на Toyota Corolla 110 🔥",
+    youtubeId: "ANEqU44lHDI",
     theme: "bmw",
   },
   {
     id: "audi-a4",
-    title: "Кастомные шкалы и обновлённый стиль приборной панели",
-    youtubeId: "mrSF0nOEoXg",
+    title:
+      "МАСТЕРА Carmanof дают надежду на то, что любая панель может служить долго⚒️",
+    youtubeId: "hsSOAWJrU8c",
     theme: "audi",
   },
   {
     id: "mercedes-w204",
-    title: "Mercedes W204",
-    youtubeId: "YQGjh8H50lk",
+    title: "ФОРД ТРАНЗИТ тюнинг щитка за минуты!",
+    youtubeId: "qH-ajEJgDZY",
     theme: "mercedes",
   },
 ];

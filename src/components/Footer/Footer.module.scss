@@ -1,66 +1,85 @@
 .footer {
-  margin-top: 96px;
-  padding-bottom: 32px;
+  margin-top: 64px;
+  padding: 16px 0 24px;
 }
 
 .container {
   width: min(1200px, calc(100vw - 32px));
   margin: 0 auto;
-
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
 }
 
-.top {
-  display: flex;
-  justify-content: space-between;
+.bottom {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 16px;
 }
 
-.menu {
+/* Лево */
+.copy {
+  justify-self: start;
+
+  font-family: Manrope, sans-serif;
+  font-size: 13px;
+  line-height: 18px;
+  color: rgba(29, 31, 35, 0.45);
+}
+
+/* Центр */
+.center {
   display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  justify-self: center;
 }
 
+/* Разделитель */
+.separator {
+  font-size: 13px;
+  color: rgba(29, 31, 35, 0.35);
+}
+
+/* Ссылки */
 .link {
   text-decoration: none;
 
   font-family: Manrope, sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 18px;
   font-weight: 400;
 
-  color: rgba(29, 31, 35, 0.6);
+  color: rgba(29, 31, 35, 0.55);
 
   transition: color 160ms ease;
 }
 
 .link:hover {
-  color: rgba(29, 31, 35, 0.9);
+  color: rgba(29, 31, 35, 0.85);
 }
 
-.bottom {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-.copy {
-  font-family: Manrope, sans-serif;
-  font-size: 14px;
-  line-height: 18px;
-  color: rgba(29, 31, 35, 0.5);
-}
-
+/* Право */
 .designer {
+  justify-self: end;
+
   font-family: Manrope, sans-serif;
-  font-size: 13px;
+  font-size: 12px;
   line-height: 18px;
-  color: rgba(29, 31, 35, 0.4);
+  color: rgba(29, 31, 35, 0.35);
+}
+
+/* 📱 MOBILE */
+@media (max-width: 640px) {
+  .bottom {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    text-align: center;
+  }
+
+  .copy,
+  .designer {
+    justify-self: center;
+  }
+
+  .center {
+    justify-content: center;
+  }
 }
