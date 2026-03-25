@@ -19,7 +19,7 @@
 
   border-radius: 28px;
 
-  background: rgba(255, 255, 255, 1);
+  background: rgb(255, 255, 255);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
 
@@ -32,12 +32,28 @@
   display: flex;
   align-items: center;
   text-decoration: none;
+  flex-shrink: 0;
 }
 
 .logoImage {
   display: block;
   width: 48px;
   height: 48px;
+  object-fit: contain;
+}
+
+/* Mobile logo hidden on desktop */
+.mobileLogo {
+  display: none;
+  align-items: center;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.mobileLogoImage {
+  display: block;
+  width: 44px;
+  height: 44px;
   object-fit: contain;
 }
 
@@ -56,6 +72,7 @@
 
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .burgerLine {
@@ -117,6 +134,7 @@
 .action {
   display: flex;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .button {
@@ -236,6 +254,16 @@
   color: #1d1f23;
 }
 
+/* Minimal header on desktop:
+   logo + CTA, without nav */
+.headerMinimal .inner {
+  justify-content: space-between;
+}
+
+.headerMinimal .nav {
+  display: none;
+}
+
 /* Tablet / mobile */
 @media (max-width: 767px) {
   .header {
@@ -248,13 +276,18 @@
     border-radius: 24px;
   }
 
-  /* На mobile логотип скрываем, вместо него бургер */
+  /* По умолчанию на mobile:
+     logo hidden, burger shown (главная) */
   .logo {
     display: none;
   }
 
   .burger {
     display: inline-flex;
+  }
+
+  .mobileLogo {
+    display: none;
   }
 
   /* Обычную навигацию прячем */
@@ -282,5 +315,15 @@
 
   .buttonTextMobile {
     display: inline;
+  }
+
+  /* Minimal header on mobile:
+     burger hidden, mobile logo shown */
+  .headerMinimal .burger {
+    display: none;
+  }
+
+  .headerMinimal .mobileLogo {
+    display: inline-flex;
   }
 }

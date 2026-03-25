@@ -11,20 +11,45 @@ import FAQ from "@/components/FAQ/FAQ";
 import Contact from "@/components/Contact/Contact";
 import Footer from "@/components/Footer/Footer";
 
-export default function HomePage() {
+import {
+  getHomeVideoCases,
+  getPhotoCases,
+  getSiteSettings,
+  type PhotoCase,
+  type SiteSettings,
+  type VideoCase,
+} from "@/sanity/lib/fetchers";
+
+export default async function HomePage() {
+  let settings: SiteSettings = null;
+  let videoCases: VideoCase[] = [];
+  let photoCases: PhotoCase[] = [];
+
+  try {
+    [settings, videoCases, photoCases] = await Promise.all([
+      getSiteSettings(),
+      getHomeVideoCases(),
+      getPhotoCases(),
+    ]);
+  } catch (error) {
+    console.error("HomePage error:", error);
+  }
+
+  const hasPhotoCases = photoCases.length > 0;
+
   return (
     <>
       <Hero />
-      <VideoCaseBlock />
+      <VideoCaseBlock videoCases={videoCases} />
       <MainOffer />
-      <OtherWorks />
+      <OtherWorks hasPhotoCases={hasPhotoCases} />
       <AdditionalElements />
-      <ProcessBlock />     
-      <MoreExamplesBlock />      
+      <ProcessBlock />
+      <MoreExamplesBlock />
       <TrustBlock />
       <Prices />
       <FAQ />
-      <Contact />
+      <Contact settings={settings} />
       <Footer />
     </>
   );

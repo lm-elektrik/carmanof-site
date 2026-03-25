@@ -8,6 +8,10 @@ type OtherWorkItem = {
   imageSrc: string;
 };
 
+type OtherWorksProps = {
+  hasPhotoCases: boolean;
+};
+
 const otherWorksItems: OtherWorkItem[] = [
   {
     title: "Пересвет шкал",
@@ -21,21 +25,18 @@ const otherWorksItems: OtherWorkItem[] = [
   },
 ];
 
-export default function OtherWorks() {
+export default function OtherWorks({ hasPhotoCases }: OtherWorksProps) {
   return (
     <section className={styles.section}>
       <Container>
         <div className={styles.wrapper}>
-          {/* Заголовок */}
           <h2 className={styles.title}>Другие работы</h2>
 
-          {/* Контент (2 карточки) */}
           <div className={styles.cards}>
             {otherWorksItems.map((item) => (
-              <div key={item.title} className={styles.card}>
+              <article key={item.title} className={styles.card}>
                 <div className={styles.text}>
                   <h3 className={styles.cardTitle}>{item.title}</h3>
-
                   <p className={styles.cardText}>{item.text}</p>
                 </div>
 
@@ -44,15 +45,23 @@ export default function OtherWorks() {
                   style={{ backgroundImage: `url(${item.imageSrc})` }}
                   aria-hidden="true"
                 />
-              </div>
+              </article>
             ))}
           </div>
 
-          {/* Кнопка */}
           <div className={styles.actions}>
-            <Button href="/cases" variant="secondary" size="sm">
-              Посмотреть примеры работ
-            </Button>
+            {hasPhotoCases ? (
+              <Button href="/cases" variant="secondary" size="sm">
+                Посмотреть примеры работ
+              </Button>
+            ) : (
+              <span
+                className={styles.actionsButtonDisabled}
+                aria-disabled="true"
+              >
+                Посмотреть примеры работ
+              </span>
+            )}
           </div>
         </div>
       </Container>

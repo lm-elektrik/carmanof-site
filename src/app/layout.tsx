@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import localFont from "next/font/local";
+
+import LayoutChrome from "@/components/LayoutChrome/LayoutChrome";
 import "./globals.scss";
-import Header from "@/components/Header/Header";
-import Intro from "@/components/Intro/Intro";
 
 const manrope = localFont({
   src: [
@@ -43,8 +43,12 @@ const manrope = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "CDU",
-  description: "CDU website",
+  title: {
+    default: "Carmanof",
+    template: "%s | Carmanof",
+  },
+  description:
+    "Ремонт, восстановление и доработка приборных панелей. Примеры работ, подход и удобный способ связи.",
 };
 
 export default async function RootLayout({
@@ -52,17 +56,15 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Читаем cookie на сервере.
-  // Если cookie есть, интро не рендерим вообще — без вспышек и без гидрационных конфликтов.
+  // Если cookie есть, интро не рендерим вообще —
+  // без вспышек и без гидрационных конфликтов.
   const cookieStore = await cookies();
   const introPlayed = cookieStore.get("intro-played")?.value === "1";
 
   return (
     <html lang="ru" suppressHydrationWarning>
       <body className={manrope.variable}>
-        <Intro enabled={!introPlayed} />
-        <Header />
-        {children}
+        <LayoutChrome introPlayed={introPlayed}>{children}</LayoutChrome>
       </body>
     </html>
   );

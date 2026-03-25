@@ -244,6 +244,26 @@
   height: 72px;
   border-radius: 20px;
   text-decoration: none;
+
+  transition:
+    transform 180ms ease,
+    opacity 180ms ease,
+    filter 180ms ease;
+}
+
+.messengerLink:hover {
+  transform: translateY(-2px);
+}
+
+.messengerLinkDisabled {
+  opacity: 0.34;
+  pointer-events: none;
+  cursor: default;
+  filter: grayscale(1);
+}
+
+.messengerLinkDisabled:hover {
+  transform: none;
 }
 
 .messengerIcon {

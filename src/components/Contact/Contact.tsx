@@ -4,18 +4,22 @@ import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import styles from "./Contact.module.scss";
 
-const messengerItems = [
-  {
-    name: "Telegram",
-    href: "https://t.me/Carmanof_MANAGER",
-    icon: "/icons/contact/tg.svg",
-  },
-  {
-    name: "VK",
-    href: "https://vk.com/carmanof",
-    icon: "/icons/contact/vk.svg",
-  },
-];
+type ContactSettings = {
+  phone?: string;
+  email?: string;
+  telegram?: string;
+  vk?: string;
+};
+
+type ContactProps = {
+  settings?: ContactSettings | null;
+};
+
+type MessengerItem = {
+  name: string;
+  href?: string;
+  icon: string;
+};
 
 function isPhoneObviouslyFake(phoneDigits: string) {
   if (phoneDigits.length !== 10) return true;
@@ -67,7 +71,7 @@ function formatPhoneDigits(phoneDigits: string) {
   return [part1, part2, part3, part4].filter(Boolean).join(" ");
 }
 
-export default function Contact() {
+export default function Contact({ settings }: ContactProps) {
   const [phoneDigits, setPhoneDigits] = useState("");
   const [name, setName] = useState("");
   const [isChecked, setIsChecked] = useState(false);
@@ -84,6 +88,21 @@ export default function Contact() {
       window.clearTimeout(timerId);
     };
   }, [isSuccess]);
+
+  const messengerItems = useMemo<MessengerItem[]>(() => {
+    return [
+      {
+        name: "Telegram",
+        href: settings?.telegram,
+        icon: "/icons/contact/tg.svg",
+      },
+      {
+        name: "VK",
+        href: settings?.vk,
+        icon: "/icons/contact/vk.svg",
+      },
+    ];
+  }, [settings]);
 
   const isPhoneValid = useMemo(() => {
     return phoneDigits.length === 10 && !isPhoneObviouslyFake(phoneDigits);
@@ -158,6 +177,7 @@ export default function Contact() {
                   >
                     Ваше имя
                   </label>
+
                   <input
                     id="contact-name"
                     name="name"
@@ -235,25 +255,42 @@ export default function Contact() {
               </div>
 
               <div className={styles.messengers}>
-                {messengerItems.map((item) => (
-                  <a
-                    key={item.name}
-                    href={item.href}
-                    className={styles.messengerLink}
-                    aria-label={item.name}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <Image
-                      src={item.icon}
-                      alt=""
-                      width={72}
-                      height={72}
-                      className={styles.messengerIcon}
-                      aria-hidden="true"
-                    />
-                  </a>
-                ))}
+                {messengerItems.map((item) =>
+                  item.href ? (
+                    <a
+                      key={item.name}
+                      href={item.href}
+                      className={styles.messengerLink}
+                      aria-label={item.name}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      <Image
+                        src={item.icon}
+                        alt=""
+                        width={72}
+                        height={72}
+                        className={styles.messengerIcon}
+                        aria-hidden="true"
+                      />
+                    </a>
+                  ) : (
+                    <span
+                      key={item.name}
+                      className={`${styles.messengerLink} ${styles.messengerLinkDisabled}`}
+                      aria-label={`${item.name} недоступен`}
+                    >
+                      <Image
+                        src={item.icon}
+                        alt=""
+                        width={72}
+                        height={72}
+                        className={styles.messengerIcon}
+                        aria-hidden="true"
+                      />
+                    </span>
+                  ),
+                )}
               </div>
 
               <div className={styles.qrArea}>

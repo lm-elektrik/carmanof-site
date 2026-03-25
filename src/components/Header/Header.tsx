@@ -1,12 +1,14 @@
 "use client";
 
-import styles from "./Header.module.scss";
-import Link from "next/link";
-import Container from "@/components/ui/Container/Container";
 import { useCallback, useEffect, useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-/* Навигация */
+import Container from "@/components/ui/Container/Container";
+import styles from "./Header.module.scss";
+
+/* Навигация главной */
 const navItems = [
   { label: "Работы", href: "#cases" },
   { label: "Процесс", href: "#process" },
@@ -21,24 +23,38 @@ export default function Header() {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  /* При смене страницы мобильное меню закрываем */
+  /**
+   * Главная = полный header
+   * Cases / Blog / Privacy и все вложенные страницы = минимальный header
+   */
+  const isMinimalVariant =
+    pathname?.startsWith("/cases") ||
+    pathname?.startsWith("/blog") ||
+    pathname?.startsWith("/privacy") ||
+    false;
+
+  const isMainVariant = !isMinimalVariant;
+
+  /* При смене страницы мобильное меню всегда закрываем */
   useEffect(() => {
     setIsMenuOpen(false);
   }, [pathname]);
 
-  /* Когда меню открыто на mobile — блокируем скролл страницы */
+  /* Когда открыто mobile-меню главной — блокируем скролл body */
   useEffect(() => {
-    if (!isMenuOpen) return;
+    if (!isMainVariant || !isMenuOpen) return;
 
     document.body.style.overflow = "hidden";
 
     return () => {
       document.body.style.overflow = "";
     };
-  }, [isMenuOpen]);
+  }, [isMainVariant, isMenuOpen]);
 
-  /* Закрытие меню по Escape */
+  /* Закрытие mobile-меню по Escape только для полной версии header */
   useEffect(() => {
+    if (!isMainVariant) return;
+
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
         setIsMenuOpen(false);
@@ -50,14 +66,14 @@ export default function Header() {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, []);
+  }, [isMainVariant]);
 
-  /* Скролл с учетом offset */
+  /* Плавный скролл по якорям на главной с учетом fixed header */
   const handleScroll = useCallback(
-    (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    (event: React.MouseEvent<HTMLAnchorElement>, href: string) => {
       if (!href.startsWith("#")) return;
 
-      e.preventDefault();
+      event.preventDefault();
 
       const target = document.querySelector(href);
       if (!target) return;
@@ -75,14 +91,14 @@ export default function Header() {
     [],
   );
 
-  /* Клик по "логотипу" на desktop:
-     - на главной скролл вверх
-     - на внутренних страницах обычный переход на "/" */
+  /* Логотип:
+     - на главной плавно скроллит вверх
+     - на внутренних страницах работает как обычный переход на "/" */
   const handleLogoClick = useCallback(
-    (e: React.MouseEvent<HTMLAnchorElement>) => {
+    (event: React.MouseEvent<HTMLAnchorElement>) => {
       if (pathname !== "/") return;
 
-      e.preventDefault();
+      event.preventDefault();
 
       window.scrollTo({
         top: 0,
@@ -92,94 +108,113 @@ export default function Header() {
     [pathname],
   );
 
-  /* Клик по бургеру на mobile */
-  function handleBurgerClick() {
-    setIsMenuOpen((prev) => !prev);
-  }
-
-  /* CTA-скролл */
+  /* CTA:
+     - на главной скроллит к контактам
+     - на внутренних страницах ведет на /#contact */
   const handleContactClick = useCallback(
-    (e: React.MouseEvent<HTMLAnchorElement>) => {
+    (event: React.MouseEvent<HTMLAnchorElement>) => {
       if (pathname !== "/") return;
 
-      handleScroll(e, "#contact");
+      handleScroll(event, "#contact");
     },
     [handleScroll, pathname],
   );
 
+  function handleBurgerClick() {
+    setIsMenuOpen((prev) => !prev);
+  }
+
   return (
     <>
-      <header className={styles.header}>
+      <header
+        className={`${styles.header} ${
+          isMinimalVariant ? styles.headerMinimal : ""
+        }`}
+      >
         <Container>
           <div className={styles.wrapper}>
             <div className={styles.inner}>
-              {/* Desktop: логотип */}
+              {/* Desktop logo */}
               <Link
                 href="/"
                 className={styles.logo}
                 aria-label="На главную"
                 onClick={handleLogoClick}
               >
-                <img
+                <Image
                   src="/images/logo.svg"
                   alt="Карманов"
                   width={64}
                   height={64}
                   className={styles.logoImage}
+                  priority
                 />
               </Link>
 
-              {/* Mobile: бургер */}
-              <button
-                type="button"
-                className={styles.burger}
-                aria-label={isMenuOpen ? "Закрыть меню" : "Открыть меню"}
-                aria-expanded={isMenuOpen}
-                aria-controls="mobile-navigation"
-                onClick={handleBurgerClick}
-              >
-                <span
-                  className={`${styles.burgerLine} ${
-                    isMenuOpen ? styles.burgerLineTopOpen : ""
-                  }`}
-                />
-                <span
-                  className={`${styles.burgerLine} ${
-                    isMenuOpen ? styles.burgerLineMiddleOpen : ""
-                  }`}
-                />
-                <span
-                  className={`${styles.burgerLine} ${
-                    isMenuOpen ? styles.burgerLineBottomOpen : ""
-                  }`}
-                />
-              </button>
+              {/* Mobile:
+                 main -> бургер
+                 minimal -> логотип */}
+              {isMainVariant ? (
+                <button
+                  type="button"
+                  className={styles.burger}
+                  aria-label={isMenuOpen ? "Закрыть меню" : "Открыть меню"}
+                  aria-expanded={isMenuOpen}
+                  aria-controls="mobile-navigation"
+                  onClick={handleBurgerClick}
+                >
+                  <span
+                    className={`${styles.burgerLine} ${
+                      isMenuOpen ? styles.burgerLineTopOpen : ""
+                    }`}
+                  />
+                  <span
+                    className={`${styles.burgerLine} ${
+                      isMenuOpen ? styles.burgerLineMiddleOpen : ""
+                    }`}
+                  />
+                  <span
+                    className={`${styles.burgerLine} ${
+                      isMenuOpen ? styles.burgerLineBottomOpen : ""
+                    }`}
+                  />
+                </button>
+              ) : (
+                <Link
+                  href="/"
+                  className={styles.mobileLogo}
+                  aria-label="На главную"
+                  onClick={handleLogoClick}
+                >
+                  <Image
+                    src="/images/logo.svg"
+                    alt="Карманов"
+                    width={48}
+                    height={48}
+                    className={styles.mobileLogoImage}
+                    priority
+                  />
+                </Link>
+              )}
 
-              {/* Desktop-навигация */}
-              <nav className={styles.nav} aria-label="Основная навигация">
-                <ul className={styles.list}>
-                  {navItems.map((item) => {
-                    const linkHref =
-                      pathname === "/" ? item.href : `/${item.href}`;
-
-                    return (
+              {/* Desktop-навигация только на главной */}
+              {isMainVariant ? (
+                <nav className={styles.nav} aria-label="Основная навигация">
+                  <ul className={styles.list}>
+                    {navItems.map((item) => (
                       <li key={item.href} className={styles.item}>
                         <Link
-                          href={linkHref}
+                          href={item.href}
                           className="link-primary"
-                          onClick={
-                            pathname === "/"
-                              ? (e) => handleScroll(e, item.href)
-                              : undefined
-                          }
+                          onClick={(event) => handleScroll(event, item.href)}
                         >
                           {item.label}
                         </Link>
                       </li>
-                    );
-                  })}
-                </ul>
-              </nav>
+                    ))}
+                  </ul>
+                </nav>
+              ) : null}
 
               {/* CTA */}
               <div className={styles.action}>
@@ -199,46 +234,41 @@ export default function Header() {
         </Container>
       </header>
 
-      {/* Mobile overlay */}
-      <div
-        className={`${styles.mobileOverlay} ${
-          isMenuOpen ? styles.mobileOverlayVisible : ""
-        }`}
-        onClick={() => setIsMenuOpen(false)}
-      />
+      {/* Mobile overlay и menu только для главной версии */}
+      {isMainVariant ? (
+        <>
+          <div
+            className={`${styles.mobileOverlay} ${
+              isMenuOpen ? styles.mobileOverlayVisible : ""
+            }`}
+            onClick={() => setIsMenuOpen(false)}
+          />
 
-      {/* Mobile menu */}
-      <div
-        id="mobile-navigation"
-        className={`${styles.mobileMenu} ${
-          isMenuOpen ? styles.mobileMenuOpen : ""
-        }`}
-        aria-hidden={!isMenuOpen}
-      >
-        <nav className={styles.mobileNav} aria-label="Мобильная навигация">
-          <ul className={styles.mobileList}>
-            {navItems.map((item) => {
-              const linkHref = pathname === "/" ? item.href : `/${item.href}`;
-
-              return (
-                <li key={item.href} className={styles.mobileItem}>
-                  <Link
-                    href={linkHref}
-                    className={styles.mobileLink}
-                    onClick={
-                      pathname === "/"
-                        ? (e) => handleScroll(e, item.href)
-                        : () => setIsMenuOpen(false)
-                    }
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        </nav>
-      </div>
+          <div
+            id="mobile-navigation"
+            className={`${styles.mobileMenu} ${
+              isMenuOpen ? styles.mobileMenuOpen : ""
+            }`}
+            aria-hidden={!isMenuOpen}
+          >
+            <nav className={styles.mobileNav} aria-label="Мобильная навигация">
+              <ul className={styles.mobileList}>
+                {navItems.map((item) => (
+                  <li key={item.href} className={styles.mobileItem}>
+                    <Link
+                      href={item.href}
+                      className={styles.mobileLink}
+                      onClick={(event) => handleScroll(event, item.href)}
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </div>
+        </>
+      ) : null}
     </>
   );
 }

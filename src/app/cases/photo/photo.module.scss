@@ -1,0 +1,552 @@
+.page {
+  min-height: 100vh;
+}
+
+.section {
+  padding: 120px 0;
+}
+
+.inner {
+  padding: 16px;
+  border-radius: 32px;
+  background: rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    0 10px 30px rgba(0, 0, 0, 0.04);
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: 14px;
+  color: inherit;
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  transition:
+    transform 0.3s ease,
+    background 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.backLink:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.68);
+  box-shadow:
+    0 14px 30px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.62);
+}
+
+.hero {
+  max-width: 760px;
+  margin-bottom: 24px;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(24px, 2.8vw, 34px);
+  line-height: 1.15;
+  font-weight: 600;
+  opacity: 0.92;
+}
+
+.description {
+  margin: 10px 0 0;
+  font-size: 16px;
+  line-height: 1.6;
+  opacity: 0.7;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.card {
+  position: relative;
+  min-height: 260px;
+  border-radius: 24px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.cardButton {
+  position: relative;
+  display: block;
+  width: 100%;
+  min-height: 260px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  color: inherit;
+  transition:
+    transform 0.3s ease-out,
+    background 0.3s ease-out,
+    box-shadow 0.3s ease-out;
+}
+
+.cardButton:hover {
+  transform: translateY(-2px);
+}
+
+.media {
+  position: absolute;
+  inset: 0;
+}
+
+.image {
+  object-fit: cover;
+  object-position: center;
+  transform: scale(1.01);
+  transition: transform 0.5s ease;
+}
+
+.cardButton:hover .image {
+  transform: scale(1.05);
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.04), rgba(0, 0, 0, 0.18)),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 42%);
+  transition: background 0.3s ease;
+}
+
+.cardButton:hover .overlay {
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.03), rgba(0, 0, 0, 0.12)),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.12), transparent 42%);
+}
+
+.glow {
+  position: absolute;
+  inset: auto auto -80px -80px;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.16);
+  filter: blur(60px);
+  opacity: 0.45;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+}
+
+.cardButton:hover .glow {
+  opacity: 0.7;
+  transform: scale(1.05);
+}
+
+.arrow {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.92);
+  box-shadow:
+    0 14px 28px rgba(0, 0, 0, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.24);
+  transition:
+    transform 0.3s ease,
+    background 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.cardButton:hover .arrow {
+  transform: translate(2px, -2px);
+  background: rgba(255, 255, 255, 0.18);
+  box-shadow:
+    0 20px 34px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+
+.cardTitle {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.25;
+  font-weight: 700;
+  color: #fff;
+  text-wrap: balance;
+  z-index: 1;
+}
+
+.emptyState {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 24px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.42);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow:
+    0 10px 28px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55);
+}
+
+.emptyText {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.65;
+  text-align: center;
+  opacity: 0.76;
+}
+
+.emptyActions {
+  display: flex;
+  justify-content: center;
+  margin-top: 18px;
+}
+
+.emptyLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: 14px;
+  text-decoration: none;
+  color: inherit;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  transition:
+    transform 0.3s ease,
+    background 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.emptyLink:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.68);
+  box-shadow:
+    0 14px 30px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.62);
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+}
+
+/* Fullscreen lightbox */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(10, 10, 10, 0.84);
+  backdrop-filter: blur(10px);
+}
+
+.lightboxContent {
+  position: relative;
+  width: min(1200px, 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lightboxImageWrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border-radius: 24px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow:
+    0 24px 80px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.lightboxImage {
+  object-fit: contain;
+}
+
+.lightboxControl {
+  position: absolute;
+  z-index: 2;
+  width: 52px;
+  height: 52px;
+  border: 0;
+  border-radius: 16px;
+  cursor: pointer;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(10px);
+  box-shadow:
+    0 14px 28px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  transition:
+    transform 0.3s ease,
+    background 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.lightboxControl:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow:
+    0 18px 36px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.closeButton {
+  top: -68px;
+  right: 0;
+}
+
+.prevButton {
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.prevButton:hover {
+  transform: translateY(calc(-50% - 1px));
+}
+
+.nextButton {
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.nextButton:hover {
+  transform: translateY(calc(-50% - 1px));
+}
+
+.lightboxCaption {
+  position: absolute;
+  left: 50%;
+  bottom: -56px;
+  transform: translateX(-50%);
+  max-width: min(860px, 90vw);
+  padding: 10px 16px;
+  border-radius: 14px;
+  color: #fff;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(10px);
+}
+
+@media (max-width: 1100px) {
+  .section {
+    padding: 112px 0 96px;
+  }
+
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding: 104px 0 80px;
+  }
+
+  .inner {
+    padding: 12px;
+    border-radius: 24px;
+  }
+
+  .topbar {
+    position: sticky;
+    top: 88px;
+    z-index: 10;
+    margin: 0 0 16px;
+    padding-top: 2px;
+  }
+
+  .backLink {
+    min-height: 40px;
+    padding: 0 14px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(10px);
+  }
+
+  .hero {
+    margin-bottom: 16px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .card,
+  .cardButton {
+    min-height: 240px;
+    border-radius: 22px;
+  }
+
+  .emptyState {
+    padding: 20px;
+    border-radius: 22px;
+  }
+
+  .emptyText {
+    font-size: 15px;
+    line-height: 1.62;
+  }
+
+  .lightbox {
+    padding: 16px;
+  }
+
+  .lightboxImageWrap {
+    border-radius: 18px;
+    aspect-ratio: 4 / 5;
+  }
+
+  .lightboxControl {
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+  }
+
+  .closeButton {
+    top: -58px;
+    right: 0;
+  }
+
+  .prevButton {
+    left: 12px;
+  }
+
+  .nextButton {
+    right: 12px;
+  }
+
+  .actions {
+    margin-top: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .section {
+    padding: 96px 0 72px;
+  }
+
+  .inner {
+    padding: 8px;
+    border-radius: 20px;
+  }
+
+  .topbar {
+    top: 76px;
+    margin-bottom: 14px;
+  }
+
+  .title {
+    font-size: clamp(20px, 6vw, 26px);
+  }
+
+  .description {
+    font-size: 14px;
+  }
+
+  .card,
+  .cardButton {
+    min-height: 220px;
+    border-radius: 18px;
+  }
+
+  .arrow {
+    top: 12px;
+    right: 12px;
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+  }
+
+  .cardTitle {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    font-size: 15px;
+  }
+
+  .emptyState {
+    padding: 18px;
+    border-radius: 18px;
+  }
+
+  .emptyText {
+    font-size: 14px;
+    line-height: 1.58;
+  }
+
+  .emptyLink {
+    width: 100%;
+    min-height: 40px;
+    border-radius: 12px;
+  }
+
+  .lightbox {
+    padding: 12px;
+  }
+
+  .lightboxControl {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+  }
+
+  .closeButton {
+    top: -52px;
+  }
+
+  .lightboxCaption {
+    bottom: -52px;
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+
+  .actions {
+    margin-top: 16px;
+  }
+}

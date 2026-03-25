@@ -1,7 +1,4 @@
 .section {
-  /*
-    Отступ сверху от предыдущего блока
-  */
   margin-top: 96px;
 }
 
@@ -13,17 +10,10 @@
 
   margin: 0 auto;
 
-  /*
-    Премиальный фон
-  */
   background: #fbfaf7;
   border: 1px solid rgba(221, 214, 203, 0.35);
   border-radius: 28px;
 
-  /*
-    Внутренние отступы:
-    1200 → 1120 (по 40px)
-  */
   padding: 16px 40px 24px;
 
   display: flex;
@@ -70,9 +60,6 @@
 
   padding: 16px;
 
-  /*
-    Премиальный фон карточки
-  */
   background: linear-gradient(
     180deg,
     rgba(255, 255, 255, 0.9),
@@ -81,9 +68,6 @@
 
   border-radius: 20px;
 
-  /*
-    Мягкая глубина
-  */
   box-shadow:
     0 6px 20px rgba(0, 0, 0, 0.04),
     inset 0 1px 0 rgba(255, 255, 255, 0.6);
@@ -98,7 +82,6 @@
   gap: 16px;
 }
 
-/* Заголовок карточки */
 .cardTitle {
   margin: 0;
 
@@ -109,7 +92,6 @@
   color: #1d1f23;
 }
 
-/* Текст карточки */
 .cardText {
   margin: 0;
 
@@ -131,10 +113,6 @@
   flex-shrink: 0;
   overflow: hidden;
 
-  /*
-    Нормальное отображение фонового изображения,
-    которое подставляется через style={{ backgroundImage: ... }}
-  */
   background-color: rgba(29, 31, 35, 0.06);
   background-size: cover;
   background-position: center;
@@ -147,9 +125,37 @@
   justify-content: center;
 }
 
+/* 🔴 ВАЖНО: disabled-состояние */
+.actionsButtonDisabled {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  height: 44px;
+  padding: 0 16px;
+
+  border-radius: 14px;
+
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 14px;
+  line-height: 1;
+  font-weight: 500;
+
+  background: rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+
+  color: rgba(29, 31, 35, 0.42);
+
+  cursor: not-allowed;
+
+  /* убираем любые hover эффекты */
+  pointer-events: none;
+  user-select: none;
+}
+
 /* =========================
    TABLET
-   ========================= */
+========================= */
 @media (max-width: 1100px) {
   .cards {
     flex-direction: column;
@@ -163,7 +169,7 @@
 
 /* =========================
    MOBILE
-   ========================= */
+========================= */
 @media (max-width: 640px) {
   .section {
     margin-top: 64px;

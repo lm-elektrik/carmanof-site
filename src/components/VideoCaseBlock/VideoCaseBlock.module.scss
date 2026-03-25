@@ -1,7 +1,5 @@
 .section {
   margin: 96px 0;
-
-  /* offset для якорного скролла (header + отступ + ритм) */
   scroll-margin-top: 172px;
 }
 
@@ -10,7 +8,6 @@
   max-width: 1200px;
   min-height: 420px;
   margin: 0 auto;
-
   padding: 24px 8px 28px;
 
   background: #fbfaf7;
@@ -36,28 +33,29 @@
   text-align: center;
   font-family: var(--font-manrope), sans-serif;
   font-size: 16px;
-  font-weight: 400;
   line-height: 1.5;
   color: #1d1f23;
   opacity: 0.82;
 }
+
+/* =========================
+   КАРТОЧКИ
+========================= */
 
 .cards {
   display: flex;
   align-items: stretch;
   justify-content: center;
   gap: 25px;
+  flex-wrap: nowrap;
 
   margin-bottom: 26px;
   padding: 0 8px;
-
-  flex-wrap: nowrap;
 }
 
 .card {
   width: 378px;
   flex: 0 0 378px;
-
   padding: 8px;
 
   background: #fdfcf9;
@@ -79,59 +77,27 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.32);
 }
 
+/* =========================
+   PREVIEW
+========================= */
+
 .previewButton {
   position: relative;
+  display: block;
   width: 100%;
   height: 203px;
-  border: 0;
   padding: 0;
-  cursor: pointer;
-  display: block;
   overflow: hidden;
+  border: 0;
   border-radius: 16px;
+  cursor: pointer;
+
   background-color: #1f2329;
 }
 
 .previewImage {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
   object-fit: cover;
-}
-
-/* =========================
-   АВТО-ТЕМАТИЧЕСКИЕ ПРЕВЬЮ
-   ========================= */
-
-.themeBmw {
-  background:
-    radial-gradient(
-      circle at 26% 40%,
-      rgba(61, 104, 255, 0.16),
-      transparent 32%
-    ),
-    linear-gradient(135deg, #0f1725 0%, #19263c 42%, #22385c 100%);
-}
-
-.themeAudi {
-  background:
-    radial-gradient(
-      circle at 28% 26%,
-      rgba(255, 72, 72, 0.14),
-      transparent 28%
-    ),
-    linear-gradient(135deg, #17181b 0%, #26282d 45%, #34363c 100%);
-}
-
-.themeMercedes {
-  background:
-    radial-gradient(
-      circle at 76% 24%,
-      rgba(82, 174, 255, 0.14),
-      transparent 28%
-    ),
-    linear-gradient(135deg, #10171d 0%, #1a2732 48%, #243847 100%);
+  object-position: center;
 }
 
 .previewOverlay {
@@ -156,30 +122,20 @@
     transparent 70%
   );
   filter: blur(18px);
-  pointer-events: none;
 }
 
 .previewMeta {
   position: absolute;
+  top: 16px;
   left: 18px;
   right: 18px;
-  top: 16px;
+  z-index: 1;
 
   display: flex;
   flex-direction: column;
   gap: 6px;
 
-  text-align: left;
   color: rgba(255, 255, 255, 0.96);
-  z-index: 1;
-}
-
-.previewMetaTop {
-  font-family: var(--font-manrope), sans-serif;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  opacity: 0.82;
 }
 
 .previewMetaBottom {
@@ -195,25 +151,20 @@
 .playButton {
   position: absolute;
   inset: 0;
+  z-index: 2;
+
   display: grid;
   place-items: center;
-  z-index: 2;
 }
 
 .playIcon {
   width: 96px;
   height: 96px;
-  display: block;
-
-  opacity: 0.35; // ← ВОТ ЗДЕСЬ регулируешь
+  opacity: 0.35;
 
   transition:
     transform 0.22s ease,
     opacity 0.22s ease;
-}
-
-.previewButton:hover .previewOverlay {
-  opacity: 0.9;
 }
 
 .previewButton:hover .playIcon {
@@ -221,25 +172,84 @@
   opacity: 0.9;
 }
 
+/* =========================
+   ACTIVE VIDEO
+========================= */
+
 .iframe {
+  display: block;
   width: 100%;
   height: 203px;
   border: 0;
-  display: block;
   border-radius: 16px;
+  background: #000;
 }
+
+/* =========================
+   SKELETON
+========================= */
+
+.cardSkeleton {
+  pointer-events: none;
+}
+
+.skeletonMedia {
+  width: 100%;
+  height: 203px;
+  border-radius: 16px;
+
+  background: linear-gradient(
+    180deg,
+    rgba(29, 31, 35, 0.08),
+    rgba(29, 31, 35, 0.04)
+  );
+}
+
+.skeletonText {
+  margin-top: 12px;
+  height: 18px;
+  width: 70%;
+  border-radius: 6px;
+
+  background: rgba(29, 31, 35, 0.08);
+}
+
+/* =========================
+   BUTTON
+========================= */
 
 .actions {
   display: flex;
   justify-content: center;
 }
 
+.actionsButtonDisabled {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 46px;
+  padding: 0 22px;
+
+  border-radius: 16px;
+  border: 1px solid rgba(29, 31, 35, 0.08);
+
+  background: rgba(108, 137, 189, 0.08);
+  color: rgba(29, 31, 35, 0.42);
+
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+
+  pointer-events: none;
+}
+
 /* =========================
-   TABLET
-   ========================= */
+   ADAPTIVE
+========================= */
+
 @media (max-width: 1200px) {
   .cards {
-    justify-content: center;
     flex-wrap: wrap;
   }
 
@@ -247,11 +257,6 @@
     width: calc(50% - 13px);
     flex: 0 0 calc(50% - 13px);
     min-width: 320px;
-  }
-
-  .previewButton,
-  .iframe {
-    height: 210px;
   }
 }
 
@@ -261,7 +266,6 @@
   }
 
   .wrapper {
-    min-height: auto;
     padding: 20px 12px 24px;
     border-radius: 24px;
   }
@@ -275,17 +279,8 @@
     flex: 0 0 100%;
     max-width: 560px;
   }
-
-  .previewArcLeft,
-  .previewArcRight {
-    width: 150px;
-    height: 150px;
-  }
 }
 
-/* =========================
-   MOBILE
-   ========================= */
 @media (max-width: 640px) {
   .section {
     margin: 56px 0;
@@ -302,47 +297,15 @@
 
   .description {
     font-size: 15px;
-    margin-bottom: 20px;
-  }
-
-  .cards {
-    gap: 16px;
-    padding: 0 4px;
-    margin-bottom: 20px;
   }
 
   .card {
-    min-width: 0;
-    max-width: none;
     border-radius: 18px;
   }
 
   .previewButton,
-  .iframe {
+  .iframe,
+  .skeletonMedia {
     height: 190px;
-    border-radius: 16px;
-  }
-
-  .playIcon {
-    width: 76px;
-    height: 76px;
-  }
-
-  .previewMeta {
-    left: 14px;
-    right: 14px;
-    top: 14px;
-  }
-
-  .previewMetaBottom {
-    max-width: 190px;
-    font-size: 18px;
-  }
-
-  .previewArcLeft,
-  .previewArcRight {
-    width: 130px;
-    height: 130px;
-    border-width: 10px;
   }
 }
