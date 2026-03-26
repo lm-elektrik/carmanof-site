@@ -2,6 +2,7 @@ import { defineField, defineType } from "sanity";
 
 const SANITY_API_VERSION = "2026-03-25";
 const MAX_VISIBLE_VIDEO_CASES = 18;
+const MAX_FEATURED_VIDEO_CASES = 3;
 
 export const videoCaseType = defineType({
   name: "videoCase",
@@ -44,37 +45,20 @@ export const videoCaseType = defineType({
       validation: (Rule) => Rule.required().integer().min(0),
     }),
 
+    // ===== FEATURED (лимит 3) =====
     defineField({
       name: "isFeatured",
       title: "Показывать на главной",
       type: "boolean",
       description:
-        "Если отмечен хотя бы один кейс, на главной будут показаны только отмеченные. Если отмечено больше 3 кейсов, сайт покажет первые 3 по порядку отображения.",
+        "На главной показываются только отмеченные кейсы. Максимум 3.",
       initialValue: false,
-    }),
-
-    defineField({
-      name: "isPublished",
-      title: "Показывать в списках сайта",
-      type: "boolean",
-      description:
-        "Если выключено — кейс не будет показан на сайте. Если включено — кейс участвует в витрине видео-кейсов. Одновременно на сайте может быть не больше 18 видео-кейсов.",
-      initialValue: true,
       validation: (Rule) =>
-        Rule.required().custom(async (value, context) => {
-          /**
-           * Ограничение действует только для включенного состояния.
-           * Выключать кейс всегда можно.
-           */
-          if (value !== true) {
-            return true;
-          }
+        Rule.custom(async (value, context) => {
+          if (value !== true) return true;
 
           const documentId = context.document?._id;
-
-          if (!documentId) {
-            return true;
-          }
+          if (!documentId) return true;
 
           const publishedId = documentId.replace(/^drafts\./, "");
           const draftId = `drafts.${publishedId}`;
@@ -83,7 +67,51 @@ export const videoCaseType = defineType({
             .getClient({ apiVersion: SANITY_API_VERSION })
             .withConfig({ perspective: "published" });
 
-          const visibleCasesCount = await client.fetch<number>(
+          const count = await client.fetch<number>(
+            `
+            count(
+              *[
+                _type == "videoCase" &&
+                isFeatured == true &&
+                _id != $publishedId &&
+                _id != $draftId
+              ]
+            )
+            `,
+            { publishedId, draftId },
+          );
+
+          if (count >= MAX_FEATURED_VIDEO_CASES) {
+            return `На главной уже ${MAX_FEATURED_VIDEO_CASES} кейса. Убери один перед добавлением нового.`;
+          }
+
+          return true;
+        }),
+    }),
+
+    // ===== PUBLISHED (лимит 18) =====
+    defineField({
+      name: "isPublished",
+      title: "Показывать в списках сайта",
+      type: "boolean",
+      description:
+        "Максимум 18 кейсов одновременно могут быть показаны на сайте.",
+      initialValue: true,
+      validation: (Rule) =>
+        Rule.required().custom(async (value, context) => {
+          if (value !== true) return true;
+
+          const documentId = context.document?._id;
+          if (!documentId) return true;
+
+          const publishedId = documentId.replace(/^drafts\./, "");
+          const draftId = `drafts.${publishedId}`;
+
+          const client = context
+            .getClient({ apiVersion: SANITY_API_VERSION })
+            .withConfig({ perspective: "published" });
+
+          const count = await client.fetch<number>(
             `
               count(
                 *[
@@ -94,14 +122,11 @@ export const videoCaseType = defineType({
                 ]
               )
             `,
-            {
-              publishedId,
-              draftId,
-            },
+            { publishedId, draftId },
           );
 
-          if (visibleCasesCount >= MAX_VISIBLE_VIDEO_CASES) {
-            return `На сайте уже показано ${MAX_VISIBLE_VIDEO_CASES} видео-кейсов. Чтобы включить этот кейс, сначала выключите один из текущих.`;
+          if (count >= MAX_VISIBLE_VIDEO_CASES) {
+            return `На сайте уже ${MAX_VISIBLE_VIDEO_CASES} кейсов.`;
           }
 
           return true;
@@ -112,22 +137,30 @@ export const videoCaseType = defineType({
   preview: {
     select: {
       title: "title",
-      subtitle: "youtubeId",
+      youtubeId: "youtubeId",
       featured: "isFeatured",
       published: "isPublished",
       order: "order",
     },
-    prepare({ title, subtitle, featured, published, order }) {
+
+    prepare({ title, youtubeId, featured, published, order }) {
       const meta: string[] = [];
 
-      meta.push(`Порядок: ${order}`);
+      // ===== СТАТУСЫ =====
+      if (featured && published) {
+        meta.push("🟣 На главной");
+      } else if (published) {
+        meta.push("🟢 На сайте");
+      } else {
+        meta.push("🟡 Скрыт");
+      }
 
-      if (featured) meta.push("Главная");
-      if (!published) meta.push("Скрыт");
+      // порядок
+      meta.push(`№${order}`);
 
       return {
         title,
-        subtitle: [`YouTube: ${subtitle}`, ...meta].join(" • "),
+        subtitle: [`YouTube: ${youtubeId}`, ...meta].join(" • "),
       };
     },
   },
