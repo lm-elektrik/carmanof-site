@@ -47,6 +47,8 @@ function getTagsByType(type?: string): string[] {
 
 export async function POST(req: NextRequest) {
   if (!secret) {
+    console.error("[sanity-revalidate] Missing SANITY_REVALIDATE_SECRET");
+
     return NextResponse.json(
       { ok: false, message: "Missing SANITY_REVALIDATE_SECRET" },
       { status: 500 },
@@ -63,6 +65,8 @@ export async function POST(req: NextRequest) {
     );
 
     if (!isValidSignature) {
+      console.warn("[sanity-revalidate] Invalid signature");
+
       return NextResponse.json(
         { ok: false, message: "Invalid signature" },
         { status: 401 },
@@ -72,6 +76,21 @@ export async function POST(req: NextRequest) {
     const docType = body?._type;
     const slug = body?.slug?.current;
     const tags = getTagsByType(docType);
+    const resolvedTags =
+      docType === "blogPost" && slug ? [...tags, getBlogPostTag(slug)] : tags;
+
+    const revalidatedPaths: string[] = [];
+
+    /**
+     * Лог входящего webhook.
+     * Это главный диагностический лог:
+     * видно тип документа, slug и какие теги пойдут на revalidation.
+     */
+    console.info("[sanity-revalidate] Webhook received", {
+      type: docType ?? null,
+      slug: slug ?? null,
+      tags: resolvedTags,
+    });
 
     /**
      * Tag-based revalidation:
@@ -99,9 +118,12 @@ export async function POST(req: NextRequest) {
      */
     if (docType === "blogPost") {
       revalidatePath("/blog");
+      revalidatedPaths.push("/blog");
 
       if (slug) {
-        revalidatePath(`/blog/${slug}`);
+        const articlePath = `/blog/${slug}`;
+        revalidatePath(articlePath);
+        revalidatedPaths.push(articlePath);
       }
     }
 
@@ -109,25 +131,41 @@ export async function POST(req: NextRequest) {
       revalidatePath("/");
       revalidatePath("/cases");
       revalidatePath("/cases/video");
+
+      revalidatedPaths.push("/", "/cases", "/cases/video");
     }
 
     if (docType === "photoCase") {
       revalidatePath("/");
       revalidatePath("/cases");
       revalidatePath("/cases/photo");
+
+      revalidatedPaths.push("/", "/cases", "/cases/photo");
     }
 
     if (docType === "siteSettings") {
       revalidatePath("/");
+      revalidatedPaths.push("/");
     }
+
+    /**
+     * Итоговый лог:
+     * видно, что именно реально было отправлено на revalidation.
+     */
+    console.info("[sanity-revalidate] Revalidation completed", {
+      type: docType ?? null,
+      slug: slug ?? null,
+      tags: resolvedTags,
+      paths: revalidatedPaths,
+    });
 
     return NextResponse.json({
       ok: true,
       revalidated: true,
       type: docType ?? null,
       slug: slug ?? null,
-      tags:
-        docType === "blogPost" && slug ? [...tags, getBlogPostTag(slug)] : tags,
+      tags: resolvedTags,
+      paths: revalidatedPaths,
       now: Date.now(),
     });
   } catch (error) {
