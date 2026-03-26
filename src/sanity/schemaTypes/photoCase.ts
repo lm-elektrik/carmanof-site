@@ -1,4 +1,6 @@
+import React from "react";
 import { defineField, defineType } from "sanity";
+import { LimitedCaseBooleanInput } from "../components/caseControls";
 
 const SANITY_API_VERSION = "2026-03-25";
 const MAX_VISIBLE_PHOTO_CASES = 18;
@@ -55,12 +57,21 @@ export const photoCaseType = defineType({
       description:
         "Если выключено — кейс не будет показан на сайте. Если включено — кейс участвует в витрине фото-кейсов. Одновременно на сайте может быть не больше 18 фото-кейсов.",
       initialValue: true,
+      components: {
+        input: (props) =>
+          React.createElement(LimitedCaseBooleanInput, {
+            ...props,
+            documentType: "photoCase",
+            fieldName: "isPublished",
+            limit: MAX_VISIBLE_PHOTO_CASES,
+            activeFilter: "(!defined(isPublished) || isPublished == true)",
+            enabledDescription: "Пока лимит не набран, переключатель доступен.",
+            limitReachedDescription:
+              "Лимит фото-кейсов для сайта уже достигнут.",
+          }),
+      },
       validation: (Rule) =>
         Rule.required().custom(async (value, context) => {
-          /**
-           * Ограничение действует только для включенного состояния.
-           * Выключать кейс всегда можно.
-           */
           if (value !== true) {
             return true;
           }
@@ -114,9 +125,13 @@ export const photoCaseType = defineType({
     prepare({ title, media, order, published }) {
       const meta: string[] = [];
 
-      meta.push(`Порядок: ${order}`);
+      if (published) {
+        meta.push("🟢 На сайте");
+      } else {
+        meta.push("🟡 Скрыт");
+      }
 
-      if (!published) meta.push("Скрыт");
+      meta.push(`№${order}`);
 
       return {
         title,

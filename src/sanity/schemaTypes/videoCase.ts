@@ -1,8 +1,18 @@
+import React from "react";
 import { defineField, defineType } from "sanity";
+import { LimitedCaseBooleanInput } from "../components/caseControls";
 
 const SANITY_API_VERSION = "2026-03-25";
 const MAX_VISIBLE_VIDEO_CASES = 18;
 const MAX_FEATURED_VIDEO_CASES = 3;
+
+function getYoutubeThumbnail(youtubeId?: string) {
+  if (!youtubeId) {
+    return null;
+  }
+
+  return `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg`;
+}
 
 export const videoCaseType = defineType({
   name: "videoCase",
@@ -45,7 +55,6 @@ export const videoCaseType = defineType({
       validation: (Rule) => Rule.required().integer().min(0),
     }),
 
-    // ===== FEATURED (лимит 3) =====
     defineField({
       name: "isFeatured",
       title: "Показывать на главной",
@@ -53,6 +62,18 @@ export const videoCaseType = defineType({
       description:
         "На главной показываются только отмеченные кейсы. Максимум 3.",
       initialValue: false,
+      components: {
+        input: (props) =>
+          React.createElement(LimitedCaseBooleanInput, {
+            ...props,
+            documentType: "videoCase",
+            fieldName: "isFeatured",
+            limit: MAX_FEATURED_VIDEO_CASES,
+            activeFilter: "isFeatured == true",
+            enabledDescription: "Пока лимит не набран, переключатель доступен.",
+            limitReachedDescription: "Лимит кейсов для главной уже достигнут.",
+          }),
+      },
       validation: (Rule) =>
         Rule.custom(async (value, context) => {
           if (value !== true) return true;
@@ -69,14 +90,14 @@ export const videoCaseType = defineType({
 
           const count = await client.fetch<number>(
             `
-            count(
-              *[
-                _type == "videoCase" &&
-                isFeatured == true &&
-                _id != $publishedId &&
-                _id != $draftId
-              ]
-            )
+              count(
+                *[
+                  _type == "videoCase" &&
+                  isFeatured == true &&
+                  _id != $publishedId &&
+                  _id != $draftId
+                ]
+              )
             `,
             { publishedId, draftId },
           );
@@ -89,7 +110,6 @@ export const videoCaseType = defineType({
         }),
     }),
 
-    // ===== PUBLISHED (лимит 18) =====
     defineField({
       name: "isPublished",
       title: "Показывать в списках сайта",
@@ -97,6 +117,18 @@ export const videoCaseType = defineType({
       description:
         "Максимум 18 кейсов одновременно могут быть показаны на сайте.",
       initialValue: true,
+      components: {
+        input: (props) =>
+          React.createElement(LimitedCaseBooleanInput, {
+            ...props,
+            documentType: "videoCase",
+            fieldName: "isPublished",
+            limit: MAX_VISIBLE_VIDEO_CASES,
+            activeFilter: "(!defined(isPublished) || isPublished == true)",
+            enabledDescription: "Пока лимит не набран, переключатель доступен.",
+            limitReachedDescription: "Лимит кейсов для сайта уже достигнут.",
+          }),
+      },
       validation: (Rule) =>
         Rule.required().custom(async (value, context) => {
           if (value !== true) return true;
@@ -146,7 +178,6 @@ export const videoCaseType = defineType({
     prepare({ title, youtubeId, featured, published, order }) {
       const meta: string[] = [];
 
-      // ===== СТАТУСЫ =====
       if (featured && published) {
         meta.push("🟣 На главной");
       } else if (published) {
@@ -155,12 +186,25 @@ export const videoCaseType = defineType({
         meta.push("🟡 Скрыт");
       }
 
-      // порядок
       meta.push(`№${order}`);
+
+      const thumbnailUrl = getYoutubeThumbnail(youtubeId);
 
       return {
         title,
         subtitle: [`YouTube: ${youtubeId}`, ...meta].join(" • "),
+        media: thumbnailUrl
+          ? React.createElement("img", {
+              src: thumbnailUrl,
+              alt: "",
+              style: {
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                borderRadius: "8px",
+              },
+            })
+          : undefined,
       };
     },
   },
