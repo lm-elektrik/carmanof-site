@@ -147,25 +147,6 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                   на главную и посмотреть услуги, подход и примеры работ.
                 </p>
               </header>
-
-              <section className={styles.bottomCta}>
-                <div className={styles.bottomCtaInner}>
-                  <p className={styles.bottomCtaEyebrow}>Следующий шаг</p>
-
-                  <h2 className={styles.bottomCtaTitle}>
-                    Нужна помощь по вашей задаче?
-                  </h2>
-
-                  <p className={styles.bottomCtaText}>
-                    На главной странице собраны основные услуги, примеры работ и
-                    формат взаимодействия. Это самый короткий путь к решению.
-                  </p>
-
-                  <Button href="/" variant="secondary" size="sm">
-                    Посмотреть решение
-                  </Button>
-                </div>
-              </section>
             </div>
           </Container>
         </article>
@@ -234,26 +215,6 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                 </div>
               </aside>
             </div>
-
-            <section className={styles.bottomCta}>
-              <div className={styles.bottomCtaInner}>
-                <p className={styles.bottomCtaEyebrow}>Следующий шаг</p>
-
-                <h2 className={styles.bottomCtaTitle}>
-                  Нужен практический результат, а не просто информация?
-                </h2>
-
-                <p className={styles.bottomCtaText}>
-                  На главной странице собраны услуги, подход, примеры работ и
-                  формат взаимодействия. Это самый короткий путь от вопроса к
-                  решению.
-                </p>
-
-                <Button href="/" variant="secondary" size="sm">
-                  Посмотреть решение
-                </Button>
-              </div>
-            </section>
           </div>
         </Container>
       </article>

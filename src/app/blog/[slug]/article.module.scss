@@ -222,51 +222,6 @@
   opacity: 0.76;
 }
 
-.bottomCta {
-  margin-top: 44px;
-  padding-top: 24px;
-  border-top: 1px solid rgba(0, 0, 0, 0.06);
-}
-
-.bottomCtaInner {
-  max-width: 860px;
-  padding: 28px;
-  border-radius: 28px;
-  background: rgba(255, 255, 255, 0.42);
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  box-shadow:
-    0 12px 32px rgba(0, 0, 0, 0.05),
-    inset 0 1px 0 rgba(255, 255, 255, 0.55);
-}
-
-.bottomCtaEyebrow {
-  margin: 0 0 10px;
-  font-size: 12px;
-  line-height: 1.2;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  opacity: 0.5;
-}
-
-.bottomCtaTitle {
-  max-width: 640px;
-  margin: 0 0 14px;
-  font-size: clamp(26px, 2.8vw, 36px);
-  line-height: 1.08;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  text-wrap: balance;
-}
-
-.bottomCtaText {
-  max-width: 620px;
-  margin: 0 0 20px;
-  font-size: 17px;
-  line-height: 1.7;
-  opacity: 0.8;
-}
-
 @media (max-width: 1100px) {
   .article {
     padding: 112px 0 96px;
@@ -340,21 +295,6 @@
     padding: 18px;
     border-radius: 20px;
   }
-
-  .bottomCta {
-    margin-top: 36px;
-    padding-top: 20px;
-  }
-
-  .bottomCtaInner {
-    padding: 22px;
-    border-radius: 22px;
-  }
-
-  .bottomCtaText {
-    font-size: 16px;
-    line-height: 1.65;
-  }
 }
 
 @media (max-width: 480px) {
@@ -411,26 +351,5 @@
   .ctaInner {
     padding: 16px;
     border-radius: 18px;
-  }
-
-  .bottomCta {
-    margin-top: 32px;
-    padding-top: 18px;
-  }
-
-  .bottomCtaInner {
-    padding: 18px;
-    border-radius: 18px;
-  }
-
-  .bottomCtaTitle {
-    margin-bottom: 12px;
-    font-size: clamp(22px, 7vw, 28px);
-  }
-
-  .bottomCtaText {
-    margin-bottom: 18px;
-    font-size: 15px;
-    line-height: 1.65;
   }
 }
