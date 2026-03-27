@@ -75,13 +75,30 @@ export async function POST(req: NextRequest) {
         manualBody = null;
       }
 
+      const debugInfo = {
+        hasManualBody: Boolean(manualBody),
+        manualType: manualBody?._type ?? null,
+        hasManualSecret: typeof manualBody?.secret === "string",
+        manualSecretLength:
+          typeof manualBody?.secret === "string" ? manualBody.secret.length : 0,
+        envSecretLength: secret.length,
+        manualSecretMatches:
+          typeof manualBody?.secret === "string" &&
+          manualBody.secret === secret,
+      };
+
       if (!manualBody || manualBody.secret !== secret) {
         console.warn(
           "[sanity-revalidate] Invalid signature and invalid manual secret",
+          debugInfo,
         );
 
         return NextResponse.json(
-          { ok: false, message: "Invalid signature" },
+          {
+            ok: false,
+            message: "Invalid signature",
+            debug: debugInfo,
+          },
           { status: 401 },
         );
       }
