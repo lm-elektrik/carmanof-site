@@ -67,7 +67,12 @@ export const siteSettingsQuery = groq`
     pricesItem02Title,
     pricesItem02Value,
     pricesItem03Title,
-    pricesItem03Value
+    pricesItem03Value,
+
+    faqItems[]{
+      question,
+      answer
+    }
   }
 `;
 

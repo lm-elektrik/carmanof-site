@@ -123,7 +123,7 @@ export const siteSettingsType = defineType({
       title: "Prices — цена 1",
       type: "string",
       description:
-        "Только цифры и валюта. Пример: 7 000 (без ₽). Текст 'от' на сайте добавляется автоматически.",
+        "Только цифры. Пример: 7 000. Символ ₽ и текст 'от' на сайте добавляются автоматически.",
       validation: (Rule) => Rule.max(40),
     }),
 
@@ -140,7 +140,7 @@ export const siteSettingsType = defineType({
       title: "Prices — цена 2",
       type: "string",
       description:
-        "Только цифры и валюта. Пример: 3 500 (без ₽). Текст 'от' на сайте добавляется автоматически.",
+        "Только цифры. Пример: 3 500. Символ ₽ и текст 'от' на сайте добавляются автоматически.",
       validation: (Rule) => Rule.max(40),
     }),
 
@@ -157,8 +157,42 @@ export const siteSettingsType = defineType({
       title: "Prices — цена 3",
       type: "string",
       description:
-        "Только цифры и валюта. Пример: 2 500 (без ₽). Текст 'от' на сайте добавляется автоматически.",
+        "Только цифры. Пример: 2 500. Символ ₽ и текст 'от' на сайте добавляются автоматически.",
       validation: (Rule) => Rule.max(40),
+    }),
+
+    // =========================
+    // FAQ BLOCK
+    // =========================
+
+    defineField({
+      name: "faqItems",
+      title: "FAQ (5 вопросов)",
+      type: "array",
+      validation: (Rule) =>
+        Rule.max(5).error("Можно добавить не более 5 вопросов"),
+      of: [
+        {
+          type: "object",
+          fields: [
+            defineField({
+              name: "question",
+              title: "Вопрос",
+              type: "string",
+              validation: (Rule) => Rule.required().min(10).max(120),
+            }),
+            defineField({
+              name: "answer",
+              title: "Ответ",
+              type: "text",
+              rows: 3,
+              validation: (Rule) => Rule.required().max(300),
+              description:
+                "Короткий ответ (примерно до 3 строк). Без лишней воды.",
+            }),
+          ],
+        },
+      ],
     }),
   ],
 });

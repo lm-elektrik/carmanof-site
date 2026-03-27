@@ -19,6 +19,7 @@ import {
   type SiteSettings,
   type VideoCase,
   type SanityImage,
+  type FAQItem,
 } from "@/sanity/lib/fetchers";
 import {
   getHeroImageUrl,
@@ -86,6 +87,19 @@ function buildPriceItem(params: {
   return {
     title: title || fallbackTitle,
     value: value || fallbackValue,
+  };
+}
+
+function buildFaqItem(params: {
+  item?: FAQItem;
+  fallbackQuestion: string;
+  fallbackAnswer: string;
+}): FAQItem {
+  const { item, fallbackQuestion, fallbackAnswer } = params;
+
+  return {
+    question: item?.question || fallbackQuestion,
+    answer: item?.answer || fallbackAnswer,
   };
 }
 
@@ -196,6 +210,47 @@ export default async function HomePage() {
     }),
   ];
 
+  /**
+   * FAQ:
+   * - если в Sanity есть массив faqItems, берем его
+   * - если массив пустой или не заполнен, используем fallback из 5 вопросов
+   */
+  const faqItems = [
+    buildFaqItem({
+      item: settings?.faqItems?.[0],
+      fallbackQuestion:
+        "Как отправить приборную панель и что нужно подготовить?",
+      fallbackAnswer:
+        "Перед отправкой свяжитесь с нами, уточните модель панели и аккуратно упакуйте её. После согласования подскажем, что приложить и куда отправлять.",
+    }),
+    buildFaqItem({
+      item: settings?.faqItems?.[1],
+      fallbackQuestion:
+        "Можно ли изготовить шкалы по фото без отправки оригинала?",
+      fallbackAnswer:
+        "В некоторых случаях макет можно подготовить по фото, если хорошо видны детали. Но для точного совпадения по размерам иногда нужен оригинал.",
+    }),
+    buildFaqItem({
+      item: settings?.faqItems?.[2],
+      fallbackQuestion: "Сколько занимает работа и как согласовывается макет?",
+      fallbackAnswer:
+        "Срок зависит от задачи и состояния панели. Перед запуском мы согласовываем детали, чтобы вы понимали этапы работы и ожидаемый результат.",
+    }),
+    buildFaqItem({
+      item: settings?.faqItems?.[3],
+      fallbackQuestion:
+        "Работаете ли вы по всей России и как происходит отправка?",
+      fallbackAnswer:
+        "Да, работаем по всей России. Отправка и возврат выполняются через СДЭК после согласования деталей и подтверждения работ.",
+    }),
+    buildFaqItem({
+      item: settings?.faqItems?.[4],
+      fallbackQuestion: "Можно ли сделать шкалы по индивидуальному дизайну?",
+      fallbackAnswer:
+        "Да, можем подготовить шкалы под конкретную модель, нужную графику и желаемый внешний вид. Перед запуском согласовываем макет, чтобы результат был ожидаемым.",
+    }),
+  ];
+
   return (
     <>
       <Hero
@@ -210,7 +265,7 @@ export default async function HomePage() {
       <MoreExamplesBlock images={moreExamplesImages} />
       <TrustBlock />
       <Prices items={priceItems} />
-      <FAQ />
+      <FAQ items={faqItems} />
       <Contact settings={settings} />
       <Footer />
     </>

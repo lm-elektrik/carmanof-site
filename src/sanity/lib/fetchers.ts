@@ -22,6 +22,16 @@ export type SanityImage = {
   asset?: SanityImageAsset;
 };
 
+/**
+ * FAQ item:
+ * - отдельный объект
+ * - используется в массиве faqItems
+ */
+export type FAQItem = {
+  question: string;
+  answer: string;
+};
+
 export type SiteSettings = {
   phone?: string;
   email?: string;
@@ -29,20 +39,13 @@ export type SiteSettings = {
   vk?: string;
 
   /**
-   * Изображение Hero в обычном состоянии.
-   * Если не заполнено в Sanity, на фронте используем fallback из /public.
+   * Hero изображения
    */
   heroDefaultImage?: SanityImage;
-
-  /**
-   * Изображение Hero для второго состояния ("после"/hover).
-   * Если не заполнено в Sanity, на фронте используем fallback из /public.
-   */
   heroHoverImage?: SanityImage;
 
   /**
-   * 5 изображений блока MoreExamplesBlock.
-   * Если поле пустое — на фронте используется локальный fallback.
+   * MoreExamplesBlock
    */
   moreExamplesImage01?: SanityImage;
   moreExamplesImage02?: SanityImage;
@@ -51,9 +54,7 @@ export type SiteSettings = {
   moreExamplesImage05?: SanityImage;
 
   /**
-   * Блок Prices:
-   * - названия услуг
-   * - значения цен без префикса "от"
+   * Prices block
    */
   pricesItem01Title?: string;
   pricesItem01Value?: string;
@@ -61,10 +62,14 @@ export type SiteSettings = {
   pricesItem02Value?: string;
   pricesItem03Title?: string;
   pricesItem03Value?: string;
+
+  /**
+   * FAQ block
+   */
+  faqItems?: FAQItem[];
 } | null;
 
 export type BlogImage = SanityImage;
-
 export type PhotoCaseImage = SanityImage;
 
 export type VideoCase = {
@@ -118,18 +123,8 @@ export type BlogArticle = {
    CACHE CONFIG
 ========================= */
 
-/**
- * Базовый интервал revalidation для Sanity-запросов.
- * Это безопасная замена cache: "no-store":
- * данные не будут запрашиваться на каждый рендер,
- * но и не будут "залипать" бесконечно.
- */
 const DEFAULT_REVALIDATE = 120;
 
-/**
- * Теги держим рядом, чтобы не плодить магические строки по файлу.
- * Позже, если захотим, можно вынести их в отдельный tags.ts.
- */
 const SANITY_TAGS = {
   settings: "settings",
   videoCases: "videoCases",
@@ -139,10 +134,6 @@ const SANITY_TAGS = {
   blogSlugs: "blogSlugs",
 } as const;
 
-/**
- * Точечный тег конкретной статьи.
- * Нужен для более адресной revalidation по slug.
- */
 function getBlogPostTag(slug: string) {
   return `blogPost:${slug}`;
 }
@@ -152,16 +143,7 @@ function getBlogPostTag(slug: string) {
 ========================= */
 
 type SafeFetchOptions = {
-  /**
-   * Если передаем tags, дальше можно будет подключить
-   * точечную revalidation по webhook через revalidateTag().
-   */
   tags?: string[];
-
-  /**
-   * Даже если используем tags, оставляем fallback revalidation по времени.
-   * Это защищает от ситуации, когда webhook не настроен или не сработал.
-   */
   revalidate?: number;
 };
 
@@ -175,13 +157,6 @@ async function safeFetch<T>(
 
   try {
     return await client.fetch<T>(query, params, {
-      /**
-       * Важно:
-       * - убрали cache: "no-store", потому что он отключает преимущества кэша;
-       * - если есть tags, Next сможет инвалидировать кэш точечно;
-       * - revalidate оставляем всегда как страховку по времени,
-       *   чтобы данные не "залипали", даже если webhook не сработал.
-       */
       next: tags?.length ? { tags, revalidate } : { revalidate },
     });
   } catch (error) {
@@ -196,11 +171,6 @@ async function safeFetch<T>(
 
 export async function getSiteSettings(): Promise<SiteSettings> {
   try {
-    /**
-     * Для настроек сайта используем клиент без CDN.
-     * Это уменьшает риск получить устаревшую published-версию
-     * при работе с singleton-документом siteSettings.
-     */
     return await clientNoCdn.fetch<SiteSettings>(siteSettingsQuery, {});
   } catch (error) {
     console.error("Sanity siteSettings fetch failed:", error);
@@ -263,25 +233,12 @@ export async function getBlogPostBySlug(
   slug: string,
 ): Promise<BlogArticle | null> {
   return safeFetch<BlogArticle | null>(blogPostBySlugQuery, { slug }, null, {
-    /**
-     * Общий тег списка/раздела блога.
-     * Общий тег типа сущности.
-     * И точечный тег конкретной статьи по slug.
-     *
-     * Такая схема позволяет:
-     * - при необходимости сбрасывать весь блог;
-     * - или сбрасывать только одну статью.
-     */
     tags: [SANITY_TAGS.blogPosts, SANITY_TAGS.blogPost, getBlogPostTag(slug)],
   });
 }
 
 export async function getBlogPostSlugs(): Promise<BlogPostSlug[]> {
   try {
-    /**
-     * Для slug-списка используем клиент без CDN.
-     * Это снижает риск, что generateStaticParams() получит устаревший список маршрутов.
-     */
     return await clientNoCdn.fetch<BlogPostSlug[]>(blogPostSlugsQuery, {});
   } catch (error) {
     console.error("Sanity slug fetch failed:", error);
