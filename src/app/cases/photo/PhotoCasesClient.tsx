@@ -6,6 +6,7 @@ import Link from "next/link";
 
 import Container from "@/components/ui/Container/Container";
 import Button from "@/components/ui/Button/Button";
+import BackToFlow from "@/components/ui/BackToFlow/BackToFlow";
 import styles from "./photo.module.scss";
 
 type PhotoCaseItem = {
@@ -109,6 +110,8 @@ export default function PhotoCasesClient({
       <section className={styles.section}>
         <Container>
           <div className={styles.inner}>
+            <BackToFlow />
+
             <div className={styles.topbar}>
               <Link href="/cases" className={styles.backLink}>
                 <span aria-hidden="true">←</span>
@@ -183,14 +186,11 @@ export default function PhotoCasesClient({
             ) : (
               <div className={styles.emptyState}>
                 <p className={styles.emptyText}>
-                  Фото-кейсы временно недоступны. Вы можете вернуться к общему
-                  разделу кейсов или перейти на главную страницу.
+                  Фото-кейсы временно недоступны.
                 </p>
 
                 <div className={styles.emptyActions}>
-                  <Link href="/cases" className={styles.emptyLink}>
-                    Вернуться к кейсам
-                  </Link>
+                  <BackToFlow href="/#other-works" />
                 </div>
               </div>
             )}

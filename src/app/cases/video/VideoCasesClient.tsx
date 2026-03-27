@@ -6,6 +6,7 @@ import Link from "next/link";
 
 import Container from "@/components/ui/Container/Container";
 import Button from "@/components/ui/Button/Button";
+import BackToFlow from "@/components/ui/BackToFlow/BackToFlow";
 import styles from "./video.module.scss";
 
 type VideoCaseItem = {
@@ -53,6 +54,8 @@ export default function VideoCasesClient({
       <section className={styles.section}>
         <Container>
           <div className={styles.inner}>
+            <BackToFlow href="/#other-works" />
+
             <div className={styles.topbar}>
               <Link href="/cases" className={styles.backLink}>
                 <span aria-hidden="true">←</span>
@@ -101,17 +104,13 @@ export default function VideoCasesClient({
                                 fill
                                 unoptimized
                                 className={styles.image}
-                                sizes="(max-width: 768px) 100vw, (max-width: 1100px) 50vw, 33vw"
                               />
                             </div>
 
                             <span className={styles.overlay} />
                             <span className={styles.glow} />
 
-                            <span
-                              className={styles.playWrapper}
-                              aria-hidden="true"
-                            >
+                            <span className={styles.playWrapper}>
                               <Image
                                 src="/icons/video-case-block/play.svg"
                                 alt=""
@@ -131,7 +130,7 @@ export default function VideoCasesClient({
                   })}
                 </div>
 
-                {hasMoreVideos ? (
+                {hasMoreVideos && (
                   <div className={styles.actions}>
                     <Button
                       type="button"
@@ -142,19 +141,16 @@ export default function VideoCasesClient({
                       Показать ещё
                     </Button>
                   </div>
-                ) : null}
+                )}
               </>
             ) : (
               <div className={styles.emptyState}>
                 <p className={styles.emptyText}>
-                  Видео-кейсы временно недоступны. Вы можете вернуться к общему
-                  разделу кейсов или перейти на главную страницу.
+                  Видео-кейсы временно недоступны.
                 </p>
 
                 <div className={styles.emptyActions}>
-                  <Link href="/cases" className={styles.emptyLink}>
-                    Вернуться к кейсам
-                  </Link>
+                  <BackToFlow />
                 </div>
               </div>
             )}

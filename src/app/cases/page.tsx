@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import Container from "@/components/ui/Container/Container";
+import BackToFlow from "@/components/ui/BackToFlow/BackToFlow"; // ✅ добавили
 import styles from "./cases.module.scss";
 
 export const metadata: Metadata = {
@@ -39,24 +40,8 @@ export default function CasesPage() {
         <Container>
           <div className={styles.inner}>
             <div className={styles.hero}>
-              <Link
-                href="/#other-works"
-                aria-label="Вернуться на главную к блоку Другие работы"
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 8,
-                  marginBottom: 14,
-                  fontSize: 14,
-                  lineHeight: 1.2,
-                  fontWeight: 600,
-                  color: "rgba(0, 0, 0, 0.56)",
-                  textDecoration: "none",
-                  transition: "opacity 0.2s ease, transform 0.2s ease",
-                }}
-              >
-                ← Назад
-              </Link>
+              {/* ✅ ЗАМЕНА inline кнопки */}
+              <BackToFlow />
 
               <h1 className={styles.title}>Примеры наших работ</h1>
             </div>
