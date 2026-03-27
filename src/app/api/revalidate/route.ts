@@ -7,25 +7,15 @@ type SanityWebhookBody = {
   slug?: {
     current?: string;
   };
+  secret?: string;
 };
 
-/**
- * Секрет должен совпадать с тем, который будет указан в Sanity webhook.
- */
 const secret = process.env.SANITY_REVALIDATE_SECRET;
 
-/**
- * Точечный тег конкретной статьи.
- * Должен совпадать с логикой в fetchers.ts.
- */
 function getBlogPostTag(slug: string) {
   return `blogPost:${slug}`;
 }
 
-/**
- * Маппинг типов документов Sanity на теги Next.js.
- * Эти теги должны совпадать с теми, которые уже используются в fetchers.ts.
- */
 function getTagsByType(type?: string): string[] {
   switch (type) {
     case "siteSettings":
@@ -56,66 +46,72 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    const requestClone = req.clone();
+
     /**
-     * parseBody() проверяет подпись webhook.
+     * Сначала пробуем стандартную проверку настоящего webhook от Sanity.
+     * Она срабатывает только если пришла корректная подпись.
      */
     const { isValidSignature, body } = await parseBody<SanityWebhookBody>(
       req,
       secret,
     );
 
-    if (!isValidSignature) {
-      console.warn("[sanity-revalidate] Invalid signature");
+    let resolvedBody = body;
 
-      return NextResponse.json(
-        { ok: false, message: "Invalid signature" },
-        { status: 401 },
-      );
+    /**
+     * Временный fallback для ручных тестов и локальных скриптов:
+     * если подпись невалидна, но в JSON body передан правильный secret,
+     * считаем запрос доверенным.
+     *
+     * Это удобно для диагностики endpoint через node-скрипты.
+     */
+    if (!isValidSignature) {
+      let manualBody: SanityWebhookBody | null = null;
+
+      try {
+        manualBody = await requestClone.json();
+      } catch {
+        manualBody = null;
+      }
+
+      if (!manualBody || manualBody.secret !== secret) {
+        console.warn(
+          "[sanity-revalidate] Invalid signature and invalid manual secret",
+        );
+
+        return NextResponse.json(
+          { ok: false, message: "Invalid signature" },
+          { status: 401 },
+        );
+      }
+
+      resolvedBody = manualBody;
+
+      console.info("[sanity-revalidate] Manual secret fallback used", {
+        type: resolvedBody?._type ?? null,
+        slug: resolvedBody?.slug?.current ?? null,
+      });
     }
 
-    const docType = body?._type;
-    const slug = body?.slug?.current;
+    const docType = resolvedBody?._type;
+    const slug = resolvedBody?.slug?.current;
     const tags = getTagsByType(docType);
     const resolvedTags =
       docType === "blogPost" && slug ? [...tags, getBlogPostTag(slug)] : tags;
 
     const revalidatedPaths: string[] = [];
 
-    /**
-     * Лог входящего webhook.
-     * Это главный диагностический лог:
-     * видно тип документа, slug и какие теги пойдут на revalidation.
-     */
     console.info("[sanity-revalidate] Webhook received", {
       type: docType ?? null,
       slug: slug ?? null,
       tags: resolvedTags,
     });
 
-    /**
-     * Tag-based revalidation:
-     * сбрасывает кэш всех fetch-запросов, помеченных соответствующими тегами.
-     *
-     * "max" — безопасный режим для текущей версии Next.js,
-     * чтобы сборка не падала из-за сигнатуры функции.
-     */
-    for (const tag of tags) {
+    for (const tag of resolvedTags) {
       revalidateTag(tag, "max");
     }
 
-    /**
-     * Для blogPost дополнительно сбрасываем точечный тег конкретной статьи.
-     * Это позволяет обновлять slug-страницу более адресно.
-     */
-    if (docType === "blogPost" && slug) {
-      revalidateTag(getBlogPostTag(slug), "max");
-    }
-
-    /**
-     * Path-based revalidation:
-     * дополнительно помечаем связанные страницы на пересборку
-     * при следующем запросе.
-     */
     if (docType === "blogPost") {
       revalidatePath("/blog");
       revalidatedPaths.push("/blog");
@@ -148,10 +144,6 @@ export async function POST(req: NextRequest) {
       revalidatedPaths.push("/");
     }
 
-    /**
-     * Итоговый лог:
-     * видно, что именно реально было отправлено на revalidation.
-     */
     console.info("[sanity-revalidate] Revalidation completed", {
       type: docType ?? null,
       slug: slug ?? null,
