@@ -7,9 +7,19 @@ import Container from "@/components/ui/Container/Container";
 import Button from "@/components/ui/Button/Button";
 
 type IntroPhase = "idle" | "animating" | "done";
+type DeviceMode = "mobile" | "desktop";
 
 type HeroProps = {
+  /**
+   * Картинка Hero для обычного состояния ("до").
+   * Если из Sanity ничего не пришло — используем локальный fallback.
+   */
   defaultImageSrc?: string;
+
+  /**
+   * Картинка Hero для второго состояния ("после").
+   * Если из Sanity ничего не пришло — используем локальный fallback.
+   */
   hoverImageSrc?: string;
 };
 
@@ -28,69 +38,80 @@ export default function Hero({
   defaultImageSrc = "/images/hero/hero-default.webp",
   hoverImageSrc = "/images/hero/hero-hover.webp",
 }: HeroProps) {
-  const [introPhase, setIntroPhase] = useState<IntroPhase>("idle");
+  /**
+   * По умолчанию держим mobile-сценарий:
+   * одна финальная картинка, без анимации.
+   * Это безопаснее для LCP и соответствует тому,
+   * что ты хочешь видеть на touch-устройствах.
+   */
+  const [deviceMode, setDeviceMode] = useState<DeviceMode>("mobile");
+  const [introPhase, setIntroPhase] = useState<IntroPhase>("done");
   const [isHovered, setIsHovered] = useState(false);
   const [shouldLoadHoverImage, setShouldLoadHoverImage] = useState(false);
-  const [canUseHoverEffects, setCanUseHoverEffects] = useState(false);
 
-  const autoTimerRef = useRef<number | null>(null);
+  const introTimerRef = useRef<number | null>(null);
   const idleCallbackRef = useRef<number | null>(null);
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const hoverQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
     const reducedMotionQuery = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     );
 
-    const canHover =
-      mediaQuery.matches &&
+    const isDesktopHoverDevice =
+      hoverQuery.matches &&
       !reducedMotionQuery.matches &&
       window.innerWidth > 1024;
 
-    setCanUseHoverEffects(canHover);
-
     /**
-     * 👉 MOBILE:
-     * - нет hover
-     * - показываем сразу финальную картинку
-     * - никаких анимаций и второй загрузки
+     * MOBILE / TOUCH:
+     * - сразу финальная картинка
+     * - без анимации
+     * - без второй картинки
      */
-    if (!canHover) {
+    if (!isDesktopHoverDevice) {
+      setDeviceMode("mobile");
       setIntroPhase("done");
+      setShouldLoadHoverImage(false);
       return;
     }
 
     /**
-     * 👉 DESKTOP:
-     * подгружаем hover-картинку в idle
+     * DESKTOP:
+     * - базовая картинка = default
+     * - hover-картинку подгружаем позже
+     * - затем запускаем intro-анимацию
      */
+    setDeviceMode("desktop");
+    setIntroPhase("idle");
+
     const idleWindow = window as IdleWindow;
 
     if (typeof idleWindow.requestIdleCallback === "function") {
       idleCallbackRef.current = idleWindow.requestIdleCallback(() => {
         setShouldLoadHoverImage(true);
 
-        autoTimerRef.current = window.setTimeout(() => {
+        introTimerRef.current = window.setTimeout(() => {
           setIntroPhase("animating");
         }, 400);
       });
     } else {
-      autoTimerRef.current = window.setTimeout(() => {
+      introTimerRef.current = window.setTimeout(() => {
         setShouldLoadHoverImage(true);
 
-        autoTimerRef.current = window.setTimeout(() => {
+        introTimerRef.current = window.setTimeout(() => {
           setIntroPhase("animating");
         }, 400);
-      }, 2400);
+      }, 2200);
     }
 
     return () => {
-      if (autoTimerRef.current) {
-        window.clearTimeout(autoTimerRef.current);
+      if (introTimerRef.current) {
+        window.clearTimeout(introTimerRef.current);
       }
 
       if (
-        idleCallbackRef.current &&
+        idleCallbackRef.current !== null &&
         typeof idleWindow.cancelIdleCallback === "function"
       ) {
         idleWindow.cancelIdleCallback(idleCallbackRef.current);
@@ -99,13 +120,15 @@ export default function Hero({
   }, []);
 
   function handleIntroTransitionEnd() {
-    if (introPhase === "animating") {
+    if (deviceMode === "desktop" && introPhase === "animating") {
       setIntroPhase("done");
     }
   }
 
   function handleMouseEnter() {
-    if (!canUseHoverEffects) return;
+    if (deviceMode !== "desktop") {
+      return;
+    }
 
     setIsHovered(true);
 
@@ -115,26 +138,40 @@ export default function Hero({
   }
 
   function handleMouseLeave() {
-    if (!canUseHoverEffects) return;
+    if (deviceMode !== "desktop") {
+      return;
+    }
 
     setIsHovered(false);
   }
 
   const mediaClassName = [
     styles.media,
-    introPhase === "idle" ? styles.stateDefault : "",
-    introPhase === "animating" ? styles.toHover : "",
-    introPhase === "done" && isHovered ? styles.showDefaultOnHover : "",
-    introPhase === "done" && !isHovered ? styles.showHoverIdle : "",
+    deviceMode === "desktop" && introPhase === "idle"
+      ? styles.stateDefault
+      : "",
+    deviceMode === "desktop" && introPhase === "animating"
+      ? styles.toHover
+      : "",
+    deviceMode === "desktop" && introPhase === "done" && isHovered
+      ? styles.showDefaultOnHover
+      : "",
+    deviceMode === "desktop" && introPhase === "done" && !isHovered
+      ? styles.showHoverIdle
+      : "",
   ]
     .filter(Boolean)
     .join(" ");
 
   /**
-   * 🔥 КЛЮЧЕВАЯ ЛОГИКА:
-   * на mobile используем сразу hoverImage как основную
+   * MOBILE:
+   * - сразу финальный hover-вариант
+   *
+   * DESKTOP:
+   * - сначала default-вариант
    */
-  const mainImageSrc = canUseHoverEffects ? defaultImageSrc : hoverImageSrc;
+  const mainImageSrc =
+    deviceMode === "mobile" ? hoverImageSrc : defaultImageSrc;
 
   return (
     <section className={styles.hero} id="home">
@@ -174,7 +211,6 @@ export default function Hero({
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
           >
-            {/* MAIN IMAGE */}
             <div className={styles.imageBase}>
               <Image
                 src={mainImageSrc}
@@ -187,8 +223,7 @@ export default function Hero({
               />
             </div>
 
-            {/* HOVER IMAGE ONLY DESKTOP */}
-            {canUseHoverEffects && shouldLoadHoverImage ? (
+            {deviceMode === "desktop" && shouldLoadHoverImage ? (
               <div
                 className={styles.imageHover}
                 onTransitionEnd={handleIntroTransitionEnd}
