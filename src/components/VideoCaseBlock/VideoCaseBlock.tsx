@@ -28,8 +28,23 @@ function truncateText(text: string, maxLength: number) {
   return `${text.slice(0, maxLength).trimEnd()}…`;
 }
 
+/**
+ * Для карточек ниже первого экрана используем mqdefault:
+ * картинка заметно легче, а визуально для превью-карточек этого достаточно.
+ */
 function getYoutubeThumbnail(youtubeId: string) {
-  return `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg`;
+  return `https://i.ytimg.com/vi/${youtubeId}/mqdefault.jpg`;
+}
+
+function getYoutubeEmbedUrl(youtubeId: string) {
+  const params = new URLSearchParams({
+    autoplay: "1",
+    rel: "0",
+    modestbranding: "1",
+    playsinline: "1",
+  });
+
+  return `https://www.youtube-nocookie.com/embed/${youtubeId}?${params.toString()}`;
 }
 
 export default function VideoCaseBlock({ videoCases }: VideoCaseBlockProps) {
@@ -65,10 +80,11 @@ export default function VideoCaseBlock({ videoCases }: VideoCaseBlockProps) {
                       {isActive ? (
                         <iframe
                           className={styles.iframe}
-                          src={`https://www.youtube.com/embed/${item.youtubeId}?autoplay=1&rel=0`}
+                          src={getYoutubeEmbedUrl(item.youtubeId)}
                           title={item.title}
-                          allow="autoplay; encrypted-media"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                           allowFullScreen
+                          referrerPolicy="strict-origin-when-cross-origin"
                         />
                       ) : (
                         <button
@@ -83,6 +99,9 @@ export default function VideoCaseBlock({ videoCases }: VideoCaseBlockProps) {
                             fill
                             sizes="(max-width: 767px) 100vw, (max-width: 1279px) 50vw, 33vw"
                             className={styles.previewImage}
+                            loading="lazy"
+                            fetchPriority="low"
+                            decoding="async"
                           />
 
                           <span className={styles.previewOverlay} />
