@@ -31,21 +31,35 @@ export default function Hero({
 }: HeroProps) {
   const [introPhase, setIntroPhase] = useState<IntroPhase>("idle");
   const [isHovered, setIsHovered] = useState(false);
+  const [shouldLoadHoverImage, setShouldLoadHoverImage] = useState(false);
+
   const autoTimerRef = useRef<number | null>(null);
+  const hoverImageTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
     /**
-     * Один раз запускаем стартовую анимацию после появления блока.
-     * Небольшая пауза оставляет первый экран стабильным,
-     * а потом плавно показывает второе состояние.
+     * Сначала даём браузеру спокойно загрузить LCP-картинку первого экрана.
+     * Вторую картинку hero подключаем позже, чтобы она не конкурировала с основной.
+     */
+    hoverImageTimerRef.current = window.setTimeout(() => {
+      setShouldLoadHoverImage(true);
+    }, 1800);
+
+    /**
+     * Стартовую анимацию запускаем только после того,
+     * как разрешили подгрузку второй картинки.
      */
     autoTimerRef.current = window.setTimeout(() => {
       setIntroPhase("animating");
-    }, 1200);
+    }, 2200);
 
     return () => {
       if (autoTimerRef.current) {
         window.clearTimeout(autoTimerRef.current);
+      }
+
+      if (hoverImageTimerRef.current) {
+        window.clearTimeout(hoverImageTimerRef.current);
       }
     };
   }, []);
@@ -57,16 +71,18 @@ export default function Hero({
   }
 
   function handleMouseEnter() {
-    /**
-     * Пока курсор над блоком — показываем default-картинку.
-     */
     setIsHovered(true);
+
+    /**
+     * Если пользователь навёлся раньше таймера,
+     * разрешаем подгрузку второй картинки сразу.
+     */
+    if (!shouldLoadHoverImage) {
+      setShouldLoadHoverImage(true);
+    }
   }
 
   function handleMouseLeave() {
-    /**
-     * Как только курсор ушёл — возвращаем hover-состояние.
-     */
     setIsHovered(false);
   }
 
@@ -129,18 +145,20 @@ export default function Hero({
               />
             </div>
 
-            <div
-              className={styles.imageHover}
-              onTransitionEnd={handleIntroTransitionEnd}
-            >
-              <Image
-                src={hoverImageSrc}
-                alt=""
-                fill
-                sizes={HERO_IMAGE_SIZES}
-                className={styles.imageElement}
-              />
-            </div>
+            {shouldLoadHoverImage ? (
+              <div
+                className={styles.imageHover}
+                onTransitionEnd={handleIntroTransitionEnd}
+              >
+                <Image
+                  src={hoverImageSrc}
+                  alt=""
+                  fill
+                  sizes={HERO_IMAGE_SIZES}
+                  className={styles.imageElement}
+                />
+              </div>
+            ) : null}
           </div>
         </div>
       </Container>
