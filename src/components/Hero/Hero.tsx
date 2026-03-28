@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import styles from "./Hero.module.scss";
 import Container from "@/components/ui/Container/Container";
@@ -21,6 +22,9 @@ type HeroProps = {
   hoverImageSrc?: string;
 };
 
+const HERO_IMAGE_SIZES =
+  "(max-width: 640px) calc(100vw - 28px), (max-width: 1024px) calc(100vw - 64px), (max-width: 1240px) 480px, 520px";
+
 export default function Hero({
   defaultImageSrc = "/images/hero/hero-default.webp",
   hoverImageSrc = "/images/hero/hero-hover.webp",
@@ -30,7 +34,11 @@ export default function Hero({
   const autoTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
-    // Один раз запускаем стартовую анимацию после появления блока.
+    /**
+     * Один раз запускаем стартовую анимацию после появления блока.
+     * Небольшая пауза оставляет первый экран стабильным,
+     * а потом плавно показывает второе состояние.
+     */
     autoTimerRef.current = window.setTimeout(() => {
       setIntroPhase("animating");
     }, 1200);
@@ -49,12 +57,16 @@ export default function Hero({
   }
 
   function handleMouseEnter() {
-    // Пока курсор НАД блоком — показываем default-картинку.
+    /**
+     * Пока курсор над блоком — показываем default-картинку.
+     */
     setIsHovered(true);
   }
 
   function handleMouseLeave() {
-    // Как только курсор УШЕЛ — возвращаем обычное состояние.
+    /**
+     * Как только курсор ушёл — возвращаем hover-состояние.
+     */
     setIsHovered(false);
   }
 
@@ -106,16 +118,29 @@ export default function Hero({
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
           >
-            <div
-              className={styles.imageBase}
-              style={{ backgroundImage: `url("${defaultImageSrc}")` }}
-            />
+            <div className={styles.imageBase}>
+              <Image
+                src={defaultImageSrc}
+                alt="Пример тюнинга приборной панели Carmanof"
+                fill
+                priority
+                sizes={HERO_IMAGE_SIZES}
+                className={styles.imageElement}
+              />
+            </div>
 
             <div
               className={styles.imageHover}
-              style={{ backgroundImage: `url("${hoverImageSrc}")` }}
               onTransitionEnd={handleIntroTransitionEnd}
-            />
+            >
+              <Image
+                src={hoverImageSrc}
+                alt=""
+                fill
+                sizes={HERO_IMAGE_SIZES}
+                className={styles.imageElement}
+              />
+            </div>
           </div>
         </div>
       </Container>
