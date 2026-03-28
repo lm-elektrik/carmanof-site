@@ -140,6 +140,7 @@ export default function Hero({
                 alt="Пример тюнинга приборной панели Carmanof"
                 fill
                 priority
+                fetchPriority="high"
                 sizes={HERO_IMAGE_SIZES}
                 className={styles.imageElement}
               />
