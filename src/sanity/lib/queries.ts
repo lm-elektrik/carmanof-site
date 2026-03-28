@@ -133,6 +133,25 @@ export const photoCasesQuery = groq`
   }
 `;
 
+/**
+ * Облегчённый запрос только для проверки:
+ * есть ли вообще хотя бы один фото-кейс.
+ *
+ * Используем count(), чтобы не тянуть список карточек,
+ * когда на главной нужна только булевая проверка.
+ */
+export const photoCasesExistQuery = groq`
+  {
+    "hasItems": count(
+      *[
+        _type == "photoCase" &&
+        (!defined(isPublished) || isPublished == true) &&
+        defined(order)
+      ]
+    ) > 0
+  }
+`;
+
 /* =========================
    BLOG
 ========================= */

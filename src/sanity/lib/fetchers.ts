@@ -3,6 +3,7 @@ import {
   siteSettingsQuery,
   videoCasesQuery,
   photoCasesQuery,
+  photoCasesExistQuery,
   blogPostsQuery,
   blogPostBySlugQuery,
   blogPostSlugsQuery,
@@ -119,6 +120,10 @@ export type BlogArticle = {
   content?: PortableTextBlock[];
 };
 
+type HasCasesResult = {
+  hasItems?: boolean;
+} | null;
+
 /* =========================
    CACHE CONFIG
 ========================= */
@@ -218,6 +223,24 @@ export async function getPhotoCases(): Promise<PhotoCase[]> {
   return safeFetch<PhotoCase[]>(photoCasesQuery, {}, [], {
     tags: [SANITY_TAGS.photoCases],
   });
+}
+
+/**
+ * Облегчённый запрос для главной страницы:
+ * нужен только факт наличия фото-кейсов,
+ * без загрузки всего массива карточек.
+ */
+export async function hasPhotoCases(): Promise<boolean> {
+  const result = await safeFetch<HasCasesResult>(
+    photoCasesExistQuery,
+    {},
+    { hasItems: false },
+    {
+      tags: [SANITY_TAGS.photoCases],
+    },
+  );
+
+  return Boolean(result?.hasItems);
 }
 
 /* =========================

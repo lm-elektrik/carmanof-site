@@ -13,9 +13,8 @@ import Footer from "@/components/Footer/Footer";
 
 import {
   getHomeVideoCases,
-  getPhotoCases,
   getSiteSettings,
-  type PhotoCase,
+  hasPhotoCases,
   type SiteSettings,
   type VideoCase,
   type SanityImage,
@@ -105,15 +104,19 @@ function buildFaqItem(params: {
 
 export default async function HomePage() {
   /**
-   * Используем Promise.allSettled вместо Promise.all:
-   * если один запрос к Sanity временно упадёт,
-   * остальные блоки страницы всё равно продолжат работать.
+   * На главной используем только лёгкие запросы:
+   * - настройки сайта
+   * - 3 видео-кейса для блока
+   * - булеву проверку наличия фото-кейсов
+   *
+   * Это дешевле, чем тянуть весь массив photoCases
+   * только ради вычисления hasCases.
    */
-  const [settingsResult, videoCasesResult, photoCasesResult] =
+  const [settingsResult, videoCasesResult, hasPhotoCasesResult] =
     await Promise.allSettled([
       getSiteSettings(),
       getHomeVideoCases(),
-      getPhotoCases(),
+      hasPhotoCases(),
     ]);
 
   const settings: SiteSettings =
@@ -122,8 +125,10 @@ export default async function HomePage() {
   const videoCases: VideoCase[] =
     videoCasesResult.status === "fulfilled" ? videoCasesResult.value : [];
 
-  const photoCases: PhotoCase[] =
-    photoCasesResult.status === "fulfilled" ? photoCasesResult.value : [];
+  const photoCasesAvailable =
+    hasPhotoCasesResult.status === "fulfilled"
+      ? hasPhotoCasesResult.value
+      : false;
 
   if (settingsResult.status === "rejected") {
     console.error("HomePage siteSettings error:", settingsResult.reason);
@@ -133,8 +138,11 @@ export default async function HomePage() {
     console.error("HomePage videoCases error:", videoCasesResult.reason);
   }
 
-  if (photoCasesResult.status === "rejected") {
-    console.error("HomePage photoCases error:", photoCasesResult.reason);
+  if (hasPhotoCasesResult.status === "rejected") {
+    console.error(
+      "HomePage photoCases availability error:",
+      hasPhotoCasesResult.reason,
+    );
   }
 
   /**
@@ -142,7 +150,7 @@ export default async function HomePage() {
    * если на сайте есть хотя бы один кейс любого типа:
    * видео или фото.
    */
-  const hasCases = videoCases.length > 0 || photoCases.length > 0;
+  const hasCases = videoCases.length > 0 || photoCasesAvailable;
 
   /**
    * Hero-картинки:

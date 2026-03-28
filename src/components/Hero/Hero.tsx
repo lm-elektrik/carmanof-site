@@ -26,31 +26,16 @@ type HeroProps = {
 const HERO_IMAGE_SIZES =
   "(max-width: 640px) calc(100vw - 28px), (max-width: 1024px) calc(100vw - 64px), (max-width: 1240px) 480px, 520px";
 
-type IdleWindow = Window & {
-  requestIdleCallback?: (
-    callback: IdleRequestCallback,
-    options?: IdleRequestOptions,
-  ) => number;
-  cancelIdleCallback?: (handle: number) => void;
-};
-
 export default function Hero({
   defaultImageSrc = "/images/hero/hero-default.webp",
   hoverImageSrc = "/images/hero/hero-hover.webp",
 }: HeroProps) {
-  /**
-   * По умолчанию держим mobile-сценарий:
-   * одна финальная картинка, без анимации.
-   * Это безопаснее для LCP и соответствует тому,
-   * что ты хочешь видеть на touch-устройствах.
-   */
   const [deviceMode, setDeviceMode] = useState<DeviceMode>("mobile");
   const [introPhase, setIntroPhase] = useState<IntroPhase>("done");
   const [isHovered, setIsHovered] = useState(false);
   const [shouldLoadHoverImage, setShouldLoadHoverImage] = useState(false);
 
   const introTimerRef = useRef<number | null>(null);
-  const idleCallbackRef = useRef<number | null>(null);
 
   useEffect(() => {
     const hoverQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
@@ -78,43 +63,22 @@ export default function Hero({
 
     /**
      * DESKTOP:
-     * - базовая картинка = default
-     * - hover-картинку подгружаем позже
-     * - затем запускаем intro-анимацию
+     * - сохраняем привычную механику
+     * - default картинка видна сразу
+     * - hover картинку подключаем
+     * - анимация стартует через 1.2с, как было задумано
      */
     setDeviceMode("desktop");
     setIntroPhase("idle");
+    setShouldLoadHoverImage(true);
 
-    const idleWindow = window as IdleWindow;
-
-    if (typeof idleWindow.requestIdleCallback === "function") {
-      idleCallbackRef.current = idleWindow.requestIdleCallback(() => {
-        setShouldLoadHoverImage(true);
-
-        introTimerRef.current = window.setTimeout(() => {
-          setIntroPhase("animating");
-        }, 400);
-      });
-    } else {
-      introTimerRef.current = window.setTimeout(() => {
-        setShouldLoadHoverImage(true);
-
-        introTimerRef.current = window.setTimeout(() => {
-          setIntroPhase("animating");
-        }, 400);
-      }, 2200);
-    }
+    introTimerRef.current = window.setTimeout(() => {
+      setIntroPhase("animating");
+    }, 1200);
 
     return () => {
       if (introTimerRef.current) {
         window.clearTimeout(introTimerRef.current);
-      }
-
-      if (
-        idleCallbackRef.current !== null &&
-        typeof idleWindow.cancelIdleCallback === "function"
-      ) {
-        idleWindow.cancelIdleCallback(idleCallbackRef.current);
       }
     };
   }, []);
@@ -131,10 +95,6 @@ export default function Hero({
     }
 
     setIsHovered(true);
-
-    if (!shouldLoadHoverImage) {
-      setShouldLoadHoverImage(true);
-    }
   }
 
   function handleMouseLeave() {
@@ -165,10 +125,10 @@ export default function Hero({
 
   /**
    * MOBILE:
-   * - сразу финальный hover-вариант
+   * - сразу показываем финальный hover-вариант
    *
    * DESKTOP:
-   * - сначала default-вариант
+   * - основной первый кадр = default
    */
   const mainImageSrc =
     deviceMode === "mobile" ? hoverImageSrc : defaultImageSrc;
