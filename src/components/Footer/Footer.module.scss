@@ -14,17 +14,15 @@
   align-items: center;
 }
 
-/* Лево */
 .copy {
   justify-self: start;
 
-  font-family: Manrope, sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-size: 13px;
   line-height: 18px;
   color: rgba(29, 31, 35, 0.45);
 }
 
-/* Центр */
 .center {
   display: flex;
   align-items: center;
@@ -32,21 +30,18 @@
   justify-self: center;
 }
 
-/* Разделитель */
 .separator {
   font-size: 13px;
   color: rgba(29, 31, 35, 0.35);
 }
 
-/* Ссылки */
 .link {
   text-decoration: none;
 
-  font-family: Manrope, sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-size: 13px;
   line-height: 18px;
   font-weight: 400;
-
   color: rgba(29, 31, 35, 0.55);
 
   transition: color 160ms ease;
@@ -56,17 +51,15 @@
   color: rgba(29, 31, 35, 0.85);
 }
 
-/* Право */
 .designer {
   justify-self: end;
 
-  font-family: Manrope, sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-size: 12px;
   line-height: 18px;
   color: rgba(29, 31, 35, 0.35);
 }
 
-/* 📱 MOBILE */
 @media (max-width: 640px) {
   .bottom {
     grid-template-columns: 1fr;

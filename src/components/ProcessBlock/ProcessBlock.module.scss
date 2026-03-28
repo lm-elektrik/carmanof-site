@@ -1,9 +1,5 @@
 .section {
-  /*
-    Внешний вертикальный ритм блока.
-  */
   margin: 96px 0;
-  /* offset для якорного скролла (header + отступ + ритм) */
   scroll-margin-top: 172px;
 }
 
@@ -27,9 +23,6 @@
 }
 
 .steps {
-  /*
-    4 карточки по 294 + 3 gap по 8 = 1200
-  */
   display: flex;
   align-items: stretch;
   justify-content: flex-start;
@@ -41,37 +34,28 @@
 }
 
 .stepItem {
-  /*
-    Стрелка привязывается к конкретному шагу.
-  */
   position: relative;
   width: 294px;
   flex: 0 0 294px;
 }
 
 .card {
-  width: 100%;
-  min-height: 152px;
-
-  padding: 24px 36px;
-
-  background: #ffffff;
-  border: 1px solid #dadde3;
-  border-radius: 20px;
-
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
   gap: 12px;
 
-  box-shadow:
-    0 8px 20px rgba(17, 24, 39, 0.03),
-    inset 0 1px 0 rgba(255, 255, 255, 0.42);
+  width: 100%;
+  min-height: 152px;
+  padding: 24px 36px;
 
-  /*
-    Блок информационный — без hover-анимации и без курсора pointer.
-  */
+  background: #ffffff;
+  border: 1px solid #dadde3;
+  border-radius: 20px;
+  box-shadow:
+    0 4px 12px rgba(17, 24, 39, 0.025),
+    inset 0 1px 0 rgba(255, 255, 255, 0.36);
 }
 
 .cardTitle {
@@ -96,40 +80,27 @@
 }
 
 .arrow {
-  /*
-    Формула:
-    правый край карточки + половина gap - половина ширины стрелки
-
-    gap = 8
-    icon = 46
-    4 - 23 = -19
-
-    => ставим стрелку у правого края карточки и
-       смещаем влево на 19px.
-  */
   position: absolute;
   top: 50%;
   left: 100%;
-  transform: translate(-19px, -50%);
-
-  width: 46px;
-  height: 64px;
+  z-index: 2;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  z-index: 2;
+  width: 46px;
+  height: 64px;
+
   pointer-events: none;
+  transform: translate(-19px, -50%);
 }
 
 .arrowIcon {
+  display: block;
   width: 46px;
   height: 64px;
-  display: block;
   object-fit: contain;
-
-  filter: drop-shadow(0 6px 10px rgba(17, 24, 39, 0.08));
   opacity: 0.92;
 }
 
@@ -153,10 +124,6 @@
     flex: 0 0 calc(50% - 4px);
     min-width: 320px;
   }
-
-  /*
-    Стрелки оставляем и на tablet.
-  */
 }
 
 @media (max-width: 960px) {
@@ -165,8 +132,8 @@
   }
 
   .title {
-    font-size: 28px;
     margin-bottom: 24px;
+    font-size: 28px;
   }
 }
 
@@ -183,8 +150,8 @@
   }
 
   .title {
-    font-size: 24px;
     margin-bottom: 20px;
+    font-size: 24px;
   }
 
   .steps {
@@ -201,6 +168,9 @@
     min-height: auto;
     padding: 20px 24px;
     border-radius: 18px;
+    box-shadow:
+      0 2px 8px rgba(17, 24, 39, 0.022),
+      inset 0 1px 0 rgba(255, 255, 255, 0.32);
   }
 
   .cardTitle {
@@ -211,9 +181,6 @@
     font-size: 15px;
   }
 
-  /*
-    На mobile стрелки уже мешают — убираем.
-  */
   .arrow {
     display: none;
   }

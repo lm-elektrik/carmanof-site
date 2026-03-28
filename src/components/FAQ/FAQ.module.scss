@@ -5,11 +5,12 @@
 .container {
   width: min(1200px, calc(100vw - 32px));
   margin: 0 auto;
-  border-radius: 28px;
-  background: #fbf9f5;
-  border: 1px solid rgba(29, 31, 35, 0.04);
-  box-shadow: 0 1px 2px rgba(29, 31, 35, 0.02);
   overflow: hidden;
+
+  border-radius: 28px;
+  border: 1px solid rgba(29, 31, 35, 0.04);
+  background: #fbf9f5;
+  box-shadow: 0 1px 2px rgba(29, 31, 35, 0.02);
 }
 
 .content {
@@ -24,12 +25,14 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+
   height: 32px;
   padding: 0 14px;
+
   border-radius: 999px;
   background: #efe6d8;
 
-  font-family: Manrope, sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-size: 14px;
   line-height: 18px;
   font-weight: 400;
@@ -43,40 +46,41 @@
 }
 
 .item {
-  border-radius: 18px;
-  background: #f5f2ec;
-  border: 1px solid rgba(29, 31, 35, 0.045);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
   overflow: hidden;
+
+  border-radius: 18px;
+  border: 1px solid rgba(29, 31, 35, 0.045);
+  background: #f5f2ec;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
 }
 
 .itemActive {
-  background: #f0ebe2;
   border-color: rgba(29, 31, 35, 0.05);
+  background: #f0ebe2;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.42),
     0 1px 2px rgba(29, 31, 35, 0.02);
 }
 
 .trigger {
-  width: 100%;
-  min-height: 48px;
-  padding: 14px 20px;
-  border: 0;
-  background: transparent;
-  cursor: pointer;
-
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 20px;
 
+  width: 100%;
+  min-height: 48px;
+  padding: 14px 20px;
+  border: 0;
+
+  background: transparent;
+  cursor: pointer;
   text-align: left;
   font-family: inherit;
 }
 
 .question {
-  font-family: Manrope, sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-size: 16px;
   line-height: 22px;
   font-weight: 400;
@@ -87,7 +91,7 @@
   flex-shrink: 0;
   width: 20px;
 
-  font-family: Manrope, sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-size: 18px;
   line-height: 18px;
   font-weight: 400;
@@ -96,15 +100,13 @@
 }
 
 .panel {
-  // Закрытое состояние: ответ полностью скрыт.
   display: grid;
-  grid-template-rows: 0fr;
   overflow: hidden;
+  grid-template-rows: 0fr;
   transition: grid-template-rows 220ms ease;
 }
 
 .panelOpen {
-  // Открытое состояние: даём место под ответ примерно на 3 строки.
   grid-template-rows: 1fr;
 }
 
@@ -114,11 +116,11 @@
 }
 
 .answer {
+  max-width: 920px;
   margin: 0;
   padding: 0 20px 18px;
-  max-width: 920px;
 
-  font-family: Manrope, sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-size: 15px;
   line-height: 22px;
   font-weight: 400;
@@ -140,8 +142,8 @@
 
 @media (hover: hover) and (pointer: fine) {
   .item:hover {
-    background: #f3efe8;
     border-color: rgba(29, 31, 35, 0.05);
+    background: #f3efe8;
   }
 }
 
@@ -159,8 +161,8 @@
   }
 
   .answer {
-    padding: 0 18px 18px;
     max-width: 100%;
+    padding: 0 18px 18px;
   }
 }
 
@@ -196,8 +198,8 @@
 
   .trigger {
     min-height: 46px;
-    padding: 14px 16px;
     gap: 12px;
+    padding: 14px 16px;
   }
 
   .question {
@@ -212,8 +214,8 @@
   }
 
   .answer {
-    padding: 0 16px 16px;
     max-width: 100%;
+    padding: 0 16px 16px;
     font-size: 15px;
     line-height: 22px;
   }

@@ -8,6 +8,7 @@
   text-decoration: none;
   white-space: nowrap;
   cursor: pointer;
+
   font-family: inherit;
   font-weight: 500;
   line-height: 1;
@@ -20,8 +21,10 @@
     opacity 0.2s ease;
 }
 
-.button:hover {
-  transform: translateY(-1px);
+@media (hover: hover) and (pointer: fine) {
+  .button:hover {
+    transform: translateY(-1px);
+  }
 }
 
 .primary {

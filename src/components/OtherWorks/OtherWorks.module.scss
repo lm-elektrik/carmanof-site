@@ -2,34 +2,28 @@
   margin-top: 96px;
 }
 
-/* === ОСНОВНОЙ КОНТЕЙНЕР === */
 .wrapper {
-  width: 100%;
-  max-width: 1200px;
-  min-height: 320px;
-
-  margin: 0 auto;
-
-  background: #fbfaf7;
-  border: 1px solid rgba(221, 214, 203, 0.35);
-  border-radius: 28px;
-
-  padding: 16px 40px 24px;
-
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-
-/* === ЗАГОЛОВОК === */
-.title {
-  margin: 0 0 16px;
 
   width: 100%;
+  max-width: 1200px;
+  min-height: 320px;
+  margin: 0 auto;
+  padding: 16px 40px 24px;
+
+  border: 1px solid rgba(221, 214, 203, 0.35);
+  border-radius: 28px;
+  background: #fbfaf7;
+}
+
+.title {
+  width: 100%;
   max-width: 1120px;
+  margin: 0 0 16px;
 
   text-align: center;
-
   font-family: var(--font-manrope), sans-serif;
   font-size: 22px;
   font-weight: 500;
@@ -37,49 +31,41 @@
   color: #1d1f23;
 }
 
-/* === КАРТОЧКИ === */
 .cards {
-  width: 100%;
-  max-width: 1120px;
-
   display: flex;
   justify-content: space-between;
   gap: 40px;
 
+  width: 100%;
+  max-width: 1120px;
   margin-bottom: 16px;
 }
 
-/* === КАРТОЧКА === */
 .card {
-  width: 540px;
-  height: 190px;
-
   display: flex;
   align-items: center;
   justify-content: space-between;
 
+  width: 540px;
+  height: 190px;
   padding: 16px;
 
+  border-radius: 20px;
   background: linear-gradient(
     180deg,
-    rgba(255, 255, 255, 0.9),
-    rgba(255, 255, 255, 0.6)
+    rgba(255, 255, 255, 0.88),
+    rgba(255, 255, 255, 0.68)
   );
-
-  border-radius: 20px;
-
   box-shadow:
-    0 6px 20px rgba(0, 0, 0, 0.04),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    0 4px 12px rgba(0, 0, 0, 0.03),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
-/* === ТЕКСТ === */
 .text {
-  width: 252px;
-
   display: flex;
   flex-direction: column;
   gap: 16px;
+  width: 252px;
 }
 
 .cardTitle {
@@ -100,32 +86,28 @@
   font-weight: 400;
   line-height: 1.4;
   color: #1d1f23;
-
   opacity: 0.85;
 }
 
-/* === КАРТИНКА === */
 .image {
-  width: 240px;
-  height: 158px;
-
-  border-radius: 14px;
   flex-shrink: 0;
   overflow: hidden;
 
+  width: 240px;
+  height: 158px;
+  border-radius: 14px;
+
   background-color: rgba(29, 31, 35, 0.06);
-  background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  background-size: cover;
 }
 
-/* === КНОПКА === */
 .actions {
   display: flex;
   justify-content: center;
 }
 
-/* 🔴 ВАЖНО: disabled-состояние */
 .actionsButtonDisabled {
   display: inline-flex;
   align-items: center;
@@ -134,28 +116,21 @@
   height: 44px;
   padding: 0 16px;
 
+  border: 1px solid rgba(0, 0, 0, 0.06);
   border-radius: 14px;
+  background: rgba(0, 0, 0, 0.04);
 
   font-family: var(--font-manrope), sans-serif;
   font-size: 14px;
   line-height: 1;
   font-weight: 500;
-
-  background: rgba(0, 0, 0, 0.04);
-  border: 1px solid rgba(0, 0, 0, 0.06);
-
   color: rgba(29, 31, 35, 0.42);
 
   cursor: not-allowed;
-
-  /* убираем любые hover эффекты */
   pointer-events: none;
   user-select: none;
 }
 
-/* =========================
-   TABLET
-========================= */
 @media (max-width: 1100px) {
   .cards {
     flex-direction: column;
@@ -167,9 +142,6 @@
   }
 }
 
-/* =========================
-   MOBILE
-========================= */
 @media (max-width: 640px) {
   .section {
     margin-top: 64px;
@@ -185,6 +157,9 @@
     align-items: flex-start;
     gap: 16px;
     height: auto;
+    box-shadow:
+      0 2px 8px rgba(0, 0, 0, 0.025),
+      inset 0 1px 0 rgba(255, 255, 255, 0.42);
   }
 
   .image {

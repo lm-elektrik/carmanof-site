@@ -11,13 +11,7 @@
   padding: 8px;
   border-radius: 32px;
   background: #efebe4;
-
-  /* Сглаживание краёв контейнера для более мягкого "apple-like" ощущения */
   overflow: hidden;
-  transform: translateZ(0);
-  backface-visibility: hidden;
-  mask-image: radial-gradient(white, black);
-  -webkit-mask-image: -webkit-radial-gradient(white, black);
 }
 
 .gridTop,
@@ -38,19 +32,13 @@
 .card {
   position: relative;
   overflow: hidden;
-  border: none;
-  padding: 0;
-  width: 100%;
   display: block;
+  width: 100%;
+  padding: 0;
+  border: none;
+  border-radius: 30px;
   cursor: pointer;
   background: #d9d9d9;
-  border-radius: 30px;
-
-  /* Делает скругление визуально чище на изображениях */
-  transform: translateZ(0);
-  backface-visibility: hidden;
-  mask-image: radial-gradient(white, black);
-  -webkit-mask-image: -webkit-radial-gradient(white, black);
 }
 
 .cardTop {
@@ -64,8 +52,6 @@
 .image {
   object-fit: cover;
   transition: transform 0.35s ease;
-
-  /* Важно для fill-изображений, чтобы не было визуальных артефактов по углам */
   transform: scale(1.001);
 }
 
@@ -85,27 +71,25 @@
   align-items: center;
   justify-content: center;
   padding: 24px;
-  background: rgba(10, 12, 16, 0.82);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(10, 12, 16, 0.88);
 }
 
 .modalContent {
   position: relative;
-  width: 100%;
-  max-width: 1400px;
   display: flex;
   justify-content: center;
+  width: 100%;
+  max-width: 1400px;
 }
 
 .modalImageWrapper {
   position: relative;
   width: min(92vw, 1400px);
   height: min(88vh, 900px);
-  border-radius: 28px;
   overflow: hidden;
+  border-radius: 28px;
   background: rgba(255, 255, 255, 0.04);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.28);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.22);
 }
 
 .modalImage {

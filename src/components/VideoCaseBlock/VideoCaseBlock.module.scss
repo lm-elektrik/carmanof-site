@@ -64,20 +64,19 @@
   border-radius: 20px;
 
   box-shadow:
-    0 4px 14px rgba(17, 24, 39, 0.035),
-    inset 0 1px 0 rgba(255, 255, 255, 0.32);
+    0 3px 10px rgba(17, 24, 39, 0.03),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
 
   transition:
     transform 0.22s ease,
     box-shadow 0.22s ease;
-  will-change: transform;
 }
 
 .card:hover {
   transform: translateY(-2px);
   box-shadow:
-    0 8px 20px rgba(17, 24, 39, 0.045),
-    inset 0 1px 0 rgba(255, 255, 255, 0.32);
+    0 6px 14px rgba(17, 24, 39, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
 }
 
 /* =========================
@@ -124,7 +123,7 @@
     rgba(255, 255, 255, 0.12),
     transparent 70%
   );
-  filter: blur(12px);
+  filter: blur(8px);
   pointer-events: none;
 }
 
@@ -310,6 +309,9 @@
 
   .card {
     border-radius: 18px;
+    box-shadow:
+      0 2px 8px rgba(17, 24, 39, 0.028),
+      inset 0 1px 0 rgba(255, 255, 255, 0.24);
   }
 
   .previewButton,

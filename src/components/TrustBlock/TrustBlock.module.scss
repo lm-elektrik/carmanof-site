@@ -1,22 +1,18 @@
 .section {
-  // Единый вертикальный ритм между секциями страницы.
   margin: 96px 0;
 }
 
 .container {
-  // Основной контейнер блока:
-  // ширина 1200, фон как в MainOffer, скругление 28 в едином стиле.
   width: min(1200px, calc(100vw - 32px));
   min-height: 292px;
   margin: 0 auto;
+  overflow: hidden;
+
   border-radius: 28px;
   background: #efeae1;
-  overflow: hidden;
 }
 
 .content {
-  // Внутренний контейнер:
-  // 1200 - 40 - 40 = 1120 полезной ширины.
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -24,8 +20,6 @@
 }
 
 .textBlock {
-  // Верхняя текстовая часть стала компактнее,
-  // потому что убрали служебный eyebrow "ДОВЕРИЕ".
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -36,7 +30,8 @@
 
 .title {
   margin: 0;
-  font-family: Manrope, sans-serif;
+
+  font-family: var(--font-manrope), sans-serif;
   font-size: 32px;
   line-height: 36px;
   font-weight: 500;
@@ -45,9 +40,10 @@
 }
 
 .description {
-  margin: 0;
   max-width: 620px;
-  font-family: Manrope, sans-serif;
+  margin: 0;
+
+  font-family: var(--font-manrope), sans-serif;
   font-size: 16px;
   line-height: 24px;
   font-weight: 400;
@@ -55,24 +51,21 @@
 }
 
 .cards {
-  // Сетка карточек на desktop.
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 16px;
 }
 
 .card {
-  // Карточки сделали почти белыми, чтобы лучше читались на фоне блока.
   min-height: 164px;
   padding: 16px 18px 18px;
+
+  border: 1px solid rgba(29, 31, 35, 0.06);
   border-radius: 20px;
   background: #fcfbf8;
-  border: 1px solid rgba(29, 31, 35, 0.06);
 }
 
 .iconWrap {
-  // Обёртка под svg-иконку.
-  // Держим фиксированный размер, чтобы все карточки имели одинаковый ритм.
   width: 64px;
   height: 64px;
   margin-bottom: 14px;
@@ -86,7 +79,8 @@
 
 .cardTitle {
   margin: 0 0 10px;
-  font-family: Manrope, sans-serif;
+
+  font-family: var(--font-manrope), sans-serif;
   font-size: 22px;
   line-height: 26px;
   font-weight: 500;
@@ -96,7 +90,8 @@
 
 .cardDescription {
   margin: 0;
-  font-family: Manrope, sans-serif;
+
+  font-family: var(--font-manrope), sans-serif;
   font-size: 15px;
   line-height: 22px;
   font-weight: 400;
@@ -138,8 +133,8 @@
   }
 
   .textBlock {
-    gap: 10px;
     max-width: 100%;
+    gap: 10px;
   }
 
   .title {
