@@ -134,6 +134,14 @@ const MoreExamplesBlock = ({
                   aria-label={image.alt}
                   onClick={() => setActiveIndex(index)}
                 >
+                  {/* Preload images */}
+                  <link
+                    rel="preload"
+                    href={image.src}
+                    as="image"
+                    type="image/webp"
+                    imageSizes={topImageSizes}
+                  />
                   <Image
                     src={image.src}
                     alt={image.alt}
@@ -141,6 +149,7 @@ const MoreExamplesBlock = ({
                     className={styles.image}
                     sizes={topImageSizes}
                     priority={false}
+                    loading="lazy" // Lazy load
                   />
                 </button>
               ))}
@@ -155,6 +164,14 @@ const MoreExamplesBlock = ({
                   aria-label={image.alt}
                   onClick={() => setActiveIndex(topImages.length + index)}
                 >
+                  {/* Preload images */}
+                  <link
+                    rel="preload"
+                    href={image.src}
+                    as="image"
+                    type="image/webp"
+                    imageSizes={bottomImageSizes}
+                  />
                   <Image
                     src={image.src}
                     alt={image.alt}
@@ -162,6 +179,7 @@ const MoreExamplesBlock = ({
                     className={styles.image}
                     sizes={bottomImageSizes}
                     priority={false}
+                    loading="lazy" // Lazy load
                   />
                 </button>
               ))}
