@@ -4,6 +4,7 @@ import Image from "next/image";
 
 import Container from "@/components/ui/Container/Container";
 import { getBlogPosts } from "@/sanity/lib/fetchers";
+import { getCardImageUrl } from "@/sanity/lib/image";
 
 import styles from "./blog.module.scss";
 
@@ -39,12 +40,7 @@ function formatDate(dateString: string) {
 }
 
 export default async function BlogPage() {
-  /**
-   * getBlogPosts() уже использует безопасный fetch-слой
-   * и возвращает [] при ошибке, поэтому дополнительный try/catch здесь не нужен.
-   */
   const blogPosts = await getBlogPosts();
-
   const hasPosts = blogPosts.length > 0;
 
   return (
@@ -69,7 +65,9 @@ export default async function BlogPage() {
             {hasPosts ? (
               <div className={styles.grid}>
                 {blogPosts.map((post) => {
-                  const imageUrl = post.coverImage?.asset?.url;
+                  const imageUrl = post.coverImage
+                    ? getCardImageUrl(post.coverImage)
+                    : "";
 
                   return (
                     <article key={post._id} className={styles.card}>

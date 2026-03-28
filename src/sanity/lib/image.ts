@@ -12,6 +12,8 @@ const builder = imageUrlBuilder(client);
  */
 export type SanityImageSource = Parameters<typeof builder.image>[0];
 
+const DEFAULT_IMAGE_QUALITY = 80;
+
 function isValidImageSource(
   source: SanityImageSource | undefined | null,
 ): source is SanityImageSource {
@@ -19,51 +21,44 @@ function isValidImageSource(
 }
 
 /**
- * Внутренний helper для единообразной генерации оптимизированных URL.
- * Так проще поддерживать формат, качество и fit в одном месте.
+ * Базовый helper для генерации URL через Sanity CDN.
+ * Здесь держим единый quality и auto(format),
+ * чтобы не раздувать логику по всему проекту.
  */
 function buildOptimizedImageUrl(params: {
   source: SanityImageSource;
   width: number;
   height?: number;
   fit?: "crop" | "clip" | "fill" | "fillmax" | "max" | "scale" | "min";
-  quality?: number;
-  format?: "webp" | "jpg" | "png";
 }) {
-  const {
-    source,
-    width,
-    height,
-    fit = "crop",
-    quality = 80,
-    format = "webp",
-  } = params;
+  const { source, width, height, fit = "crop" } = params;
 
-  let imageBuilder = builder.image(source).width(width).fit(fit);
+  let imageBuilder = builder
+    .image(source)
+    .width(width)
+    .fit(fit)
+    .auto("format")
+    .quality(DEFAULT_IMAGE_QUALITY);
 
   if (height) {
     imageBuilder = imageBuilder.height(height);
   }
 
-  return imageBuilder.format(format).quality(quality).url();
+  return imageBuilder.url();
 }
 
 /**
  * Базовый builder для всех изображений Sanity.
- * Оставляем универсальным, чтобы не ломать текущие места использования
- * в блоге, кейсах и других блоках.
+ * Нужен там, где требуется ручная настройка в конкретном компоненте.
  */
 export function urlFor(source: SanityImageSource) {
   return builder.image(source);
 }
 
 /**
- * Оптимизированный URL для Hero-изображений.
- *
- * Здесь сознательно снижаем размер и качество:
- * - мобильный LCP важнее, чем избыточный запас пикселей
- * - 800px хватает даже для retina на hero-блоке
- * - quality 70 даёт заметное снижение веса без явной потери визуала
+ * Hero:
+ * визуальный блок 520x500,
+ * для retina используем 2x.
  */
 export function getHeroImageUrl(source: SanityImageSource | undefined | null) {
   if (!isValidImageSource(source)) {
@@ -72,21 +67,15 @@ export function getHeroImageUrl(source: SanityImageSource | undefined | null) {
 
   return buildOptimizedImageUrl({
     source,
-    width: 800,
-    height: 760,
+    width: 1040,
+    height: 1000,
     fit: "crop",
-    quality: 70,
   });
 }
 
 /**
- * Верхний ряд MoreExamplesBlock.
- *
- * Реальный ratio карточки по SCSS:
- * 588 / 330 ≈ 1.7818
- *
- * Для чёткости на retina используем 2x:
- * 1176 / 660
+ * Верхний ряд MoreExamplesBlock:
+ * 588x330 -> 2x = 1176x660
  */
 export function getMoreExamplesTopImageUrl(
   source: SanityImageSource | undefined | null,
@@ -104,13 +93,8 @@ export function getMoreExamplesTopImageUrl(
 }
 
 /**
- * Нижний ряд MoreExamplesBlock.
- *
- * Реальный ratio карточки по SCSS:
- * 389 / 280 ≈ 1.3893
- *
- * Для чёткости на retina используем 2x:
- * 778 / 560
+ * Нижний ряд MoreExamplesBlock:
+ * 389x280 -> 2x = 778x560
  */
 export function getMoreExamplesBottomImageUrl(
   source: SanityImageSource | undefined | null,
@@ -128,7 +112,7 @@ export function getMoreExamplesBottomImageUrl(
 }
 
 /**
- * Изображение обложки статьи / крупного контента.
+ * Обложка статьи / крупный контент.
  */
 export function getBlogCoverImageUrl(
   source: SanityImageSource | undefined | null,

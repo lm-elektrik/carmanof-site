@@ -6,7 +6,11 @@ import { PortableText, type PortableTextComponents } from "@portabletext/react";
 
 import Container from "@/components/ui/Container/Container";
 import Button from "@/components/ui/Button/Button";
-import { urlFor } from "@/sanity/lib/image";
+import {
+  getBlogCoverImageUrl,
+  getCardImageUrl,
+  urlFor,
+} from "@/sanity/lib/image";
 import { getBlogPostBySlug, getBlogPostSlugs } from "@/sanity/lib/fetchers";
 
 import styles from "./article.module.scss";
@@ -67,10 +71,15 @@ const portableTextComponents: PortableTextComponents = {
       const imageValue = value as PortableTextImageValue;
 
       /**
-       * Для inline-контента статьи берём контролируемый размер,
-       * чтобы не тянуть слишком тяжёлые изображения в тело материала.
+       * Для inline-контента статьи используем Sanity CDN
+       * с контролируемым размером и авто-форматом.
        */
-      const imageUrl = urlFor(imageValue).width(1400).fit("crop").url();
+      const imageUrl = urlFor(imageValue)
+        .width(1400)
+        .fit("crop")
+        .auto("format")
+        .quality(80)
+        .url();
 
       if (!imageUrl) {
         return null;
@@ -137,7 +146,9 @@ export async function generateMetadata({
   const title = article.seoTitle || `${article.title} | Carmanof`;
   const description = article.seoDescription || article.excerpt;
   const canonicalPath = `/blog/${article.slug}`;
-  const ogImage = article.coverImage?.asset?.url;
+  const ogImage = article.coverImage
+    ? getBlogCoverImageUrl(article.coverImage)
+    : "";
 
   return {
     title,
@@ -184,7 +195,9 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     notFound();
   }
 
-  const coverImageUrl = article.coverImage?.asset?.url;
+  const coverImageUrl = article.coverImage
+    ? getBlogCoverImageUrl(article.coverImage)
+    : "";
 
   return (
     <main className={styles.page}>
