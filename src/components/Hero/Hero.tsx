@@ -9,21 +9,20 @@ import Button from "@/components/ui/Button/Button";
 type IntroPhase = "idle" | "animating" | "done";
 
 type HeroProps = {
-  /**
-   * Картинка Hero для обычного состояния ("до").
-   * Если из Sanity ничего не пришло — используем локальный fallback.
-   */
   defaultImageSrc?: string;
-
-  /**
-   * Картинка Hero для второго состояния ("после").
-   * Если из Sanity ничего не пришло — используем локальный fallback.
-   */
   hoverImageSrc?: string;
 };
 
 const HERO_IMAGE_SIZES =
   "(max-width: 640px) calc(100vw - 28px), (max-width: 1024px) calc(100vw - 64px), (max-width: 1240px) 480px, 520px";
+
+type IdleWindow = Window & {
+  requestIdleCallback?: (
+    callback: IdleRequestCallback,
+    options?: IdleRequestOptions,
+  ) => number;
+  cancelIdleCallback?: (handle: number) => void;
+};
 
 export default function Hero({
   defaultImageSrc = "/images/hero/hero-default.webp",
@@ -32,34 +31,69 @@ export default function Hero({
   const [introPhase, setIntroPhase] = useState<IntroPhase>("idle");
   const [isHovered, setIsHovered] = useState(false);
   const [shouldLoadHoverImage, setShouldLoadHoverImage] = useState(false);
+  const [canUseHoverEffects, setCanUseHoverEffects] = useState(false);
 
   const autoTimerRef = useRef<number | null>(null);
-  const hoverImageTimerRef = useRef<number | null>(null);
+  const idleCallbackRef = useRef<number | null>(null);
 
   useEffect(() => {
-    /**
-     * Сначала даём браузеру спокойно загрузить LCP-картинку первого экрана.
-     * Вторую картинку hero подключаем позже, чтобы она не конкурировала с основной.
-     */
-    hoverImageTimerRef.current = window.setTimeout(() => {
-      setShouldLoadHoverImage(true);
-    }, 1800);
+    const mediaQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const reducedMotionQuery = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    );
+
+    const canHover =
+      mediaQuery.matches &&
+      !reducedMotionQuery.matches &&
+      window.innerWidth > 1024;
+
+    setCanUseHoverEffects(canHover);
 
     /**
-     * Стартовую анимацию запускаем только после того,
-     * как разрешили подгрузку второй картинки.
+     * 👉 MOBILE:
+     * - нет hover
+     * - показываем сразу финальную картинку
+     * - никаких анимаций и второй загрузки
      */
-    autoTimerRef.current = window.setTimeout(() => {
-      setIntroPhase("animating");
-    }, 2200);
+    if (!canHover) {
+      setIntroPhase("done");
+      return;
+    }
+
+    /**
+     * 👉 DESKTOP:
+     * подгружаем hover-картинку в idle
+     */
+    const idleWindow = window as IdleWindow;
+
+    if (typeof idleWindow.requestIdleCallback === "function") {
+      idleCallbackRef.current = idleWindow.requestIdleCallback(() => {
+        setShouldLoadHoverImage(true);
+
+        autoTimerRef.current = window.setTimeout(() => {
+          setIntroPhase("animating");
+        }, 400);
+      });
+    } else {
+      autoTimerRef.current = window.setTimeout(() => {
+        setShouldLoadHoverImage(true);
+
+        autoTimerRef.current = window.setTimeout(() => {
+          setIntroPhase("animating");
+        }, 400);
+      }, 2400);
+    }
 
     return () => {
       if (autoTimerRef.current) {
         window.clearTimeout(autoTimerRef.current);
       }
 
-      if (hoverImageTimerRef.current) {
-        window.clearTimeout(hoverImageTimerRef.current);
+      if (
+        idleCallbackRef.current &&
+        typeof idleWindow.cancelIdleCallback === "function"
+      ) {
+        idleWindow.cancelIdleCallback(idleCallbackRef.current);
       }
     };
   }, []);
@@ -71,18 +105,18 @@ export default function Hero({
   }
 
   function handleMouseEnter() {
+    if (!canUseHoverEffects) return;
+
     setIsHovered(true);
 
-    /**
-     * Если пользователь навёлся раньше таймера,
-     * разрешаем подгрузку второй картинки сразу.
-     */
     if (!shouldLoadHoverImage) {
       setShouldLoadHoverImage(true);
     }
   }
 
   function handleMouseLeave() {
+    if (!canUseHoverEffects) return;
+
     setIsHovered(false);
   }
 
@@ -95,6 +129,12 @@ export default function Hero({
   ]
     .filter(Boolean)
     .join(" ");
+
+  /**
+   * 🔥 КЛЮЧЕВАЯ ЛОГИКА:
+   * на mobile используем сразу hoverImage как основную
+   */
+  const mainImageSrc = canUseHoverEffects ? defaultImageSrc : hoverImageSrc;
 
   return (
     <section className={styles.hero} id="home">
@@ -134,9 +174,10 @@ export default function Hero({
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
           >
+            {/* MAIN IMAGE */}
             <div className={styles.imageBase}>
               <Image
-                src={defaultImageSrc}
+                src={mainImageSrc}
                 alt="Пример тюнинга приборной панели Carmanof"
                 fill
                 priority
@@ -146,7 +187,8 @@ export default function Hero({
               />
             </div>
 
-            {shouldLoadHoverImage ? (
+            {/* HOVER IMAGE ONLY DESKTOP */}
+            {canUseHoverEffects && shouldLoadHoverImage ? (
               <div
                 className={styles.imageHover}
                 onTransitionEnd={handleIntroTransitionEnd}
