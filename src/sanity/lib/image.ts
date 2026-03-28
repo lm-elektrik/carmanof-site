@@ -4,13 +4,49 @@ import { client } from "./client";
 const builder = imageUrlBuilder(client);
 
 /**
- * Берем тип источника изображения напрямую из сигнатуры builder.image().
+ * Берём тип источника изображения напрямую из сигнатуры builder.image().
  * Это самый устойчивый вариант:
  * - не завязаны на внутренние типы пакета
  * - не дублируем вручную форму объекта
  * - если библиотека обновит сигнатуру, TypeScript подхватит это автоматически
  */
 export type SanityImageSource = Parameters<typeof builder.image>[0];
+
+function isValidImageSource(
+  source: SanityImageSource | undefined | null,
+): source is SanityImageSource {
+  return Boolean(source);
+}
+
+/**
+ * Внутренний helper для единообразной генерации оптимизированных URL.
+ * Так проще поддерживать формат, качество и fit в одном месте.
+ */
+function buildOptimizedImageUrl(params: {
+  source: SanityImageSource;
+  width: number;
+  height?: number;
+  fit?: "crop" | "clip" | "fill" | "fillmax" | "max" | "scale" | "min";
+  quality?: number;
+  format?: "webp" | "jpg" | "png";
+}) {
+  const {
+    source,
+    width,
+    height,
+    fit = "crop",
+    quality = 80,
+    format = "webp",
+  } = params;
+
+  let imageBuilder = builder.image(source).width(width).fit(fit);
+
+  if (height) {
+    imageBuilder = imageBuilder.height(height);
+  }
+
+  return imageBuilder.format(format).quality(quality).url();
+}
 
 /**
  * Базовый builder для всех изображений Sanity.
@@ -26,19 +62,21 @@ export function urlFor(source: SanityImageSource) {
  *
  * Логика:
  * - визуальный размер блока: 520x500
- * - для retina-экранов отдаем 2x размер, чтобы картинка не выглядела мягкой
+ * - для retina-экранов отдаём 2x размер, чтобы картинка не выглядела мягкой
  * - формат webp уменьшает вес файла
- * - quality 80 дает хороший баланс качества и размера
+ * - quality 80 даёт хороший баланс качества и размера
  */
-export function getHeroImageUrl(source: SanityImageSource) {
-  return builder
-    .image(source)
-    .width(1040)
-    .height(1000)
-    .fit("crop")
-    .format("webp")
-    .quality(80)
-    .url();
+export function getHeroImageUrl(source: SanityImageSource | undefined | null) {
+  if (!isValidImageSource(source)) {
+    return "";
+  }
+
+  return buildOptimizedImageUrl({
+    source,
+    width: 1040,
+    height: 1000,
+    fit: "crop",
+  });
 }
 
 /**
@@ -47,21 +85,22 @@ export function getHeroImageUrl(source: SanityImageSource) {
  * Реальный ratio карточки по SCSS:
  * 588 / 330 ≈ 1.7818
  *
- * Для четкости на retina используем 2x:
+ * Для чёткости на retina используем 2x:
  * 1176 / 660
- *
- * Это почти идеальное попадание в реальную карточку,
- * поэтому crop будет вести себя предсказуемо.
  */
-export function getMoreExamplesTopImageUrl(source: SanityImageSource) {
-  return builder
-    .image(source)
-    .width(1176)
-    .height(660)
-    .fit("crop")
-    .format("webp")
-    .quality(80)
-    .url();
+export function getMoreExamplesTopImageUrl(
+  source: SanityImageSource | undefined | null,
+) {
+  if (!isValidImageSource(source)) {
+    return "";
+  }
+
+  return buildOptimizedImageUrl({
+    source,
+    width: 1176,
+    height: 660,
+    fit: "crop",
+  });
 }
 
 /**
@@ -70,19 +109,54 @@ export function getMoreExamplesTopImageUrl(source: SanityImageSource) {
  * Реальный ratio карточки по SCSS:
  * 389 / 280 ≈ 1.3893
  *
- * Для четкости на retina используем 2x:
+ * Для чёткости на retina используем 2x:
  * 778 / 560
- *
- * Это точное соответствие карточке нижнего ряда,
- * поэтому галерея будет выглядеть ровнее при разных исходниках.
  */
-export function getMoreExamplesBottomImageUrl(source: SanityImageSource) {
-  return builder
-    .image(source)
-    .width(778)
-    .height(560)
-    .fit("crop")
-    .format("webp")
-    .quality(80)
-    .url();
+export function getMoreExamplesBottomImageUrl(
+  source: SanityImageSource | undefined | null,
+) {
+  if (!isValidImageSource(source)) {
+    return "";
+  }
+
+  return buildOptimizedImageUrl({
+    source,
+    width: 778,
+    height: 560,
+    fit: "crop",
+  });
+}
+
+/**
+ * Изображение обложки статьи / крупного контента.
+ */
+export function getBlogCoverImageUrl(
+  source: SanityImageSource | undefined | null,
+) {
+  if (!isValidImageSource(source)) {
+    return "";
+  }
+
+  return buildOptimizedImageUrl({
+    source,
+    width: 1600,
+    height: 900,
+    fit: "crop",
+  });
+}
+
+/**
+ * Компактное изображение карточки.
+ */
+export function getCardImageUrl(source: SanityImageSource | undefined | null) {
+  if (!isValidImageSource(source)) {
+    return "";
+  }
+
+  return buildOptimizedImageUrl({
+    source,
+    width: 900,
+    height: 675,
+    fit: "crop",
+  });
 }

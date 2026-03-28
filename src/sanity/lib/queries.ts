@@ -82,12 +82,16 @@ export const siteSettingsQuery = groq`
 
 /**
  * Для страницы видео-кейсов ограничиваем выдачу первыми 18 элементами.
- * Главная страница продолжает отдельно брать только 3 кейса через fetchers.ts.
+ * Главная страница отдельно выбирает 3 кейса через fetchers.ts.
+ *
+ * defined(order) добавлен для стабильной сортировки:
+ * записи без order не должны случайно попадать в верх списка.
  */
 export const videoCasesQuery = groq`
   *[
     _type == "videoCase" &&
-    (!defined(isPublished) || isPublished == true)
+    (!defined(isPublished) || isPublished == true) &&
+    defined(order)
   ]
   | order(order asc)[0...18]{
     _id,
@@ -106,11 +110,14 @@ export const videoCasesQuery = groq`
 /**
  * Для страницы фото-кейсов ограничиваем выдачу первыми 18 элементами.
  * Это лимит отображения на сайте, а не запрет на создание документов в Sanity.
+ *
+ * defined(order) нужен для предсказуемого порядка карточек.
  */
 export const photoCasesQuery = groq`
   *[
     _type == "photoCase" &&
-    (!defined(isPublished) || isPublished == true)
+    (!defined(isPublished) || isPublished == true) &&
+    defined(order)
   ]
   | order(order asc)[0...18]{
     _id,
@@ -154,6 +161,10 @@ export const blogPostsQuery = groq`
   }
 `;
 
+/**
+ * Явная сортировка нужна, чтобы generateStaticParams / slug-списки
+ * были детерминированными и не "плавали" между запросами.
+ */
 export const blogPostSlugsQuery = groq`
   *[
     _type == "blogPost" &&
@@ -161,11 +172,16 @@ export const blogPostSlugsQuery = groq`
     defined(title) &&
     defined(excerpt) &&
     defined(publishedAt)
-  ]{
+  ]
+  | order(publishedAt desc){
     "slug": slug.current
   }
 `;
 
+/**
+ * Даже если в CMS по ошибке появится дубль slug,
+ * сортировка перед [0] делает выбор предсказуемым.
+ */
 export const blogPostBySlugQuery = groq`
   *[
     _type == "blogPost" &&
@@ -174,7 +190,8 @@ export const blogPostBySlugQuery = groq`
     defined(title) &&
     defined(excerpt) &&
     defined(publishedAt)
-  ][0]{
+  ]
+  | order(publishedAt desc)[0]{
     _id,
     title,
     "slug": slug.current,

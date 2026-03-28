@@ -125,7 +125,7 @@ export type BlogArticle = {
 
 const DEFAULT_REVALIDATE = 120;
 
-const SANITY_TAGS = {
+export const SANITY_TAGS = {
   settings: "settings",
   videoCases: "videoCases",
   photoCases: "photoCases",
@@ -145,6 +145,7 @@ function getBlogPostTag(slug: string) {
 type SafeFetchOptions = {
   tags?: string[];
   revalidate?: number;
+  useNoCdn?: boolean;
 };
 
 async function safeFetch<T>(
@@ -153,10 +154,12 @@ async function safeFetch<T>(
   fallback: T,
   options: SafeFetchOptions = {},
 ): Promise<T> {
-  const { tags, revalidate = DEFAULT_REVALIDATE } = options;
+  const { tags, revalidate = DEFAULT_REVALIDATE, useNoCdn = false } = options;
+
+  const activeClient = useNoCdn ? clientNoCdn : client;
 
   try {
-    return await client.fetch<T>(query, params, {
+    return await activeClient.fetch<T>(query, params, {
       next: tags?.length ? { tags, revalidate } : { revalidate },
     });
   } catch (error) {
@@ -170,12 +173,10 @@ async function safeFetch<T>(
 ========================= */
 
 export async function getSiteSettings(): Promise<SiteSettings> {
-  try {
-    return await clientNoCdn.fetch<SiteSettings>(siteSettingsQuery, {});
-  } catch (error) {
-    console.error("Sanity siteSettings fetch failed:", error);
-    return null;
-  }
+  return safeFetch<SiteSettings>(siteSettingsQuery, {}, null, {
+    tags: [SANITY_TAGS.settings],
+    useNoCdn: true,
+  });
 }
 
 /* =========================
@@ -234,14 +235,13 @@ export async function getBlogPostBySlug(
 ): Promise<BlogArticle | null> {
   return safeFetch<BlogArticle | null>(blogPostBySlugQuery, { slug }, null, {
     tags: [SANITY_TAGS.blogPosts, SANITY_TAGS.blogPost, getBlogPostTag(slug)],
+    useNoCdn: true,
   });
 }
 
 export async function getBlogPostSlugs(): Promise<BlogPostSlug[]> {
-  try {
-    return await clientNoCdn.fetch<BlogPostSlug[]>(blogPostSlugsQuery, {});
-  } catch (error) {
-    console.error("Sanity slug fetch failed:", error);
-    return [];
-  }
+  return safeFetch<BlogPostSlug[]>(blogPostSlugsQuery, {}, [], {
+    tags: [SANITY_TAGS.blogSlugs],
+    useNoCdn: true,
+  });
 }

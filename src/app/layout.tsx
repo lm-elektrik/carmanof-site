@@ -42,12 +42,36 @@ const manrope = localFont({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://carmanof-site.vercel.app"),
+  applicationName: "Carmanof",
   title: {
     default: "Carmanof",
-    template: "%s | Carmanof",
+    template: "%s",
   },
   description:
     "Ремонт, восстановление и доработка приборных панелей. Примеры работ, подход и удобный способ связи.",
+  alternates: {
+    canonical: "/",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  openGraph: {
+    title: "Carmanof",
+    description:
+      "Ремонт, восстановление и доработка приборных панелей. Примеры работ, подход и удобный способ связи.",
+    url: "/",
+    siteName: "Carmanof",
+    locale: "ru_RU",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Carmanof",
+    description:
+      "Ремонт, восстановление и доработка приборных панелей. Примеры работ, подход и удобный способ связи.",
+  },
 };
 
 export default function RootLayout({
@@ -56,11 +80,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   /**
-   * Больше не читаем cookies() в корневом layout.
-   * Это уменьшает связанность layout с request-based данными
-   * и делает корневую обертку чище для общей стратегии кэша.
+   * Корневой layout не зависит от request-based данных.
+   * Это уменьшает связанность с cookies() и помогает общей стратегии кэша.
    *
-   * Логика показа интро теперь может решаться на клиенте внутри Intro.
+   * suppressHydrationWarning оставляем, потому что часть клиентской логики
+   * может менять начальное состояние интерфейса после гидрации.
    */
   return (
     <html lang="ru" suppressHydrationWarning>

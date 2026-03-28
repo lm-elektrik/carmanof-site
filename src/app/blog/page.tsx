@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 import Container from "@/components/ui/Container/Container";
-import { getBlogPosts, type BlogPost } from "@/sanity/lib/fetchers";
+import { getBlogPosts } from "@/sanity/lib/fetchers";
 
 import styles from "./blog.module.scss";
 
@@ -11,6 +11,23 @@ export const metadata: Metadata = {
   title: "Полезные материалы | Carmanof",
   description:
     "Материалы Carmanof по приборным панелям, ремонту, восстановлению и типовым вопросам автоэлектроники.",
+  alternates: {
+    canonical: "/blog",
+  },
+  openGraph: {
+    title: "Полезные материалы | Carmanof",
+    description:
+      "Материалы Carmanof по приборным панелям, ремонту, восстановлению и типовым вопросам автоэлектроники.",
+    type: "website",
+    locale: "ru_RU",
+    url: "/blog",
+  },
+  twitter: {
+    card: "summary",
+    title: "Полезные материалы | Carmanof",
+    description:
+      "Материалы Carmanof по приборным панелям, ремонту, восстановлению и типовым вопросам автоэлектроники.",
+  },
 };
 
 function formatDate(dateString: string) {
@@ -22,13 +39,11 @@ function formatDate(dateString: string) {
 }
 
 export default async function BlogPage() {
-  let blogPosts: BlogPost[] = [];
-
-  try {
-    blogPosts = await getBlogPosts();
-  } catch (error) {
-    console.error("BlogPage error:", error);
-  }
+  /**
+   * getBlogPosts() уже использует безопасный fetch-слой
+   * и возвращает [] при ошибке, поэтому дополнительный try/catch здесь не нужен.
+   */
+  const blogPosts = await getBlogPosts();
 
   const hasPosts = blogPosts.length > 0;
 

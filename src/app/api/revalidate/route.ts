@@ -7,15 +7,23 @@ type SanityWebhookBody = {
   slug?: {
     current?: string;
   };
-  secret?: string;
 };
 
 const secret = process.env.SANITY_REVALIDATE_SECRET;
 
+/**
+ * Точечный тег конкретной статьи.
+ * Должен совпадать с тегом в fetchers.ts.
+ */
 function getBlogPostTag(slug: string) {
   return `blogPost:${slug}`;
 }
 
+/**
+ * Маппинг типов документов Sanity на cache tags Next.js.
+ * Названия тегов должны полностью совпадать с теми,
+ * которые используются в запросах данных.
+ */
 function getTagsByType(type?: string): string[] {
   switch (type) {
     case "siteSettings":
@@ -46,89 +54,56 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const requestClone = req.clone();
-
     /**
-     * Сначала пробуем стандартную проверку настоящего webhook от Sanity.
-     * Она срабатывает только если пришла корректная подпись.
+     * Проверяем подпись настоящего webhook от Sanity
+     * и одновременно получаем уже разобранное body.
      */
     const { isValidSignature, body } = await parseBody<SanityWebhookBody>(
       req,
       secret,
     );
 
-    let resolvedBody = body;
-
-    /**
-     * Временный fallback для ручных тестов и локальных скриптов:
-     * если подпись невалидна, но в JSON body передан правильный secret,
-     * считаем запрос доверенным.
-     *
-     * Это удобно для диагностики endpoint через node-скрипты.
-     */
     if (!isValidSignature) {
-      let manualBody: SanityWebhookBody | null = null;
+      console.warn("[sanity-revalidate] Invalid signature");
 
-      try {
-        manualBody = await requestClone.json();
-      } catch {
-        manualBody = null;
-      }
-
-      const debugInfo = {
-        hasManualBody: Boolean(manualBody),
-        manualType: manualBody?._type ?? null,
-        hasManualSecret: typeof manualBody?.secret === "string",
-        manualSecretLength:
-          typeof manualBody?.secret === "string" ? manualBody.secret.length : 0,
-        envSecretLength: secret.length,
-        manualSecretMatches:
-          typeof manualBody?.secret === "string" &&
-          manualBody.secret === secret,
-      };
-
-      if (!manualBody || manualBody.secret !== secret) {
-        console.warn(
-          "[sanity-revalidate] Invalid signature and invalid manual secret",
-          debugInfo,
-        );
-
-        return NextResponse.json(
-          {
-            ok: false,
-            message: "Invalid signature",
-            debug: debugInfo,
-          },
-          { status: 401 },
-        );
-      }
-
-      resolvedBody = manualBody;
-
-      console.info("[sanity-revalidate] Manual secret fallback used", {
-        type: resolvedBody?._type ?? null,
-        slug: resolvedBody?.slug?.current ?? null,
-      });
+      return NextResponse.json(
+        { ok: false, message: "Invalid signature" },
+        { status: 401 },
+      );
     }
 
-    const docType = resolvedBody?._type;
-    const slug = resolvedBody?.slug?.current;
-    const tags = getTagsByType(docType);
+    const docType = body?._type;
+    const slug = body?.slug?.current;
+    const baseTags = getTagsByType(docType);
     const resolvedTags =
-      docType === "blogPost" && slug ? [...tags, getBlogPostTag(slug)] : tags;
+      docType === "blogPost" && slug
+        ? [...baseTags, getBlogPostTag(slug)]
+        : baseTags;
 
     const revalidatedPaths: string[] = [];
 
+    /**
+     * Входной лог помогает быстро понять,
+     * какой документ реально пришёл с webhook.
+     */
     console.info("[sanity-revalidate] Webhook received", {
       type: docType ?? null,
       slug: slug ?? null,
       tags: resolvedTags,
     });
 
+    /**
+     * Сбрасываем кэш всех запросов, помеченных нужными тегами.
+     * Используем "max" как безопасный режим для текущей версии Next.js.
+     */
     for (const tag of resolvedTags) {
       revalidateTag(tag, "max");
     }
 
+    /**
+     * Дополнительно сбрасываем связанные страницы.
+     * Это уменьшает риск залипания route cache на важных разделах.
+     */
     if (docType === "blogPost") {
       revalidatePath("/blog");
       revalidatedPaths.push("/blog");
@@ -161,6 +136,10 @@ export async function POST(req: NextRequest) {
       revalidatedPaths.push("/");
     }
 
+    /**
+     * Финальный лог нужен для контроля:
+     * видно, какие теги и пути реально ушли на revalidate.
+     */
     console.info("[sanity-revalidate] Revalidation completed", {
       type: docType ?? null,
       slug: slug ?? null,

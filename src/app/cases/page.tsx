@@ -2,13 +2,30 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import Container from "@/components/ui/Container/Container";
-import BackToFlow from "@/components/ui/BackToFlow/BackToFlow"; // ✅ добавили
+import BackToFlow from "@/components/ui/BackToFlow/BackToFlow";
 import styles from "./cases.module.scss";
 
 export const metadata: Metadata = {
   title: "Примеры наших работ | Carmanof",
   description:
     "Видео и фото примеры выполненных работ Carmanof. Выберите удобный формат просмотра кейсов.",
+  alternates: {
+    canonical: "/cases",
+  },
+  openGraph: {
+    title: "Примеры наших работ | Carmanof",
+    description:
+      "Видео и фото примеры выполненных работ Carmanof. Выберите удобный формат просмотра кейсов.",
+    type: "website",
+    locale: "ru_RU",
+    url: "/cases",
+  },
+  twitter: {
+    card: "summary",
+    title: "Примеры наших работ | Carmanof",
+    description:
+      "Видео и фото примеры выполненных работ Carmanof. Выберите удобный формат просмотра кейсов.",
+  },
 };
 
 const VIDEO_PREVIEW_YOUTUBE_ID = "ANEqU44lHDI";
@@ -40,7 +57,6 @@ export default function CasesPage() {
         <Container>
           <div className={styles.inner}>
             <div className={styles.hero}>
-              {/* ✅ ЗАМЕНА inline кнопки */}
               <BackToFlow />
 
               <h1 className={styles.title}>Примеры наших работ</h1>
@@ -61,13 +77,14 @@ export default function CasesPage() {
                       fill
                       unoptimized={item.previewType === "video"}
                       className={styles.image}
+                      sizes="(max-width: 768px) 100vw, 50vw"
                     />
                   </div>
 
                   <span className={styles.overlay} />
                   <span className={styles.glow} />
 
-                  {item.previewType === "video" && (
+                  {item.previewType === "video" ? (
                     <span className={styles.playWrapper}>
                       <Image
                         src="/icons/video-case-block/play.svg"
@@ -77,7 +94,7 @@ export default function CasesPage() {
                         className={styles.playIcon}
                       />
                     </span>
-                  )}
+                  ) : null}
 
                   <span className={styles.arrow}>↗</span>
                 </Link>

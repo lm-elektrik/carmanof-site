@@ -104,18 +104,37 @@ function buildFaqItem(params: {
 }
 
 export default async function HomePage() {
-  let settings: SiteSettings = null;
-  let videoCases: VideoCase[] = [];
-  let photoCases: PhotoCase[] = [];
-
-  try {
-    [settings, videoCases, photoCases] = await Promise.all([
+  /**
+   * Используем Promise.allSettled вместо Promise.all:
+   * если один запрос к Sanity временно упадёт,
+   * остальные блоки страницы всё равно продолжат работать.
+   */
+  const [settingsResult, videoCasesResult, photoCasesResult] =
+    await Promise.allSettled([
       getSiteSettings(),
       getHomeVideoCases(),
       getPhotoCases(),
     ]);
-  } catch (error) {
-    console.error("HomePage error:", error);
+
+  const settings: SiteSettings =
+    settingsResult.status === "fulfilled" ? settingsResult.value : null;
+
+  const videoCases: VideoCase[] =
+    videoCasesResult.status === "fulfilled" ? videoCasesResult.value : [];
+
+  const photoCases: PhotoCase[] =
+    photoCasesResult.status === "fulfilled" ? photoCasesResult.value : [];
+
+  if (settingsResult.status === "rejected") {
+    console.error("HomePage siteSettings error:", settingsResult.reason);
+  }
+
+  if (videoCasesResult.status === "rejected") {
+    console.error("HomePage videoCases error:", videoCasesResult.reason);
+  }
+
+  if (photoCasesResult.status === "rejected") {
+    console.error("HomePage photoCases error:", photoCasesResult.reason);
   }
 
   /**
@@ -127,8 +146,8 @@ export default async function HomePage() {
 
   /**
    * Hero-картинки:
-   * - если поле заполнено в Sanity, отдаем оптимизированную версию
-   *   через getHeroImageUrl() под размер 520x500
+   * - если поле заполнено в Sanity, отдаём оптимизированную версию
+   *   через getHeroImageUrl()
    * - если поле пустое, используем локальный fallback из /public
    */
   const heroDefaultImageSrc = buildHeroImage({
@@ -212,7 +231,7 @@ export default async function HomePage() {
 
   /**
    * FAQ:
-   * - если в Sanity есть массив faqItems, берем его
+   * - если в Sanity есть массив faqItems, берём его
    * - если массив пустой или не заполнен, используем fallback из 5 вопросов
    */
   const faqItems = [

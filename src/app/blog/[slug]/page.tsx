@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { Image as SanityImage } from "sanity";
 import Image from "next/image";
+import { notFound } from "next/navigation";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
 
 import Container from "@/components/ui/Container/Container";
@@ -26,6 +27,13 @@ type ArticlePageProps = {
     slug: string;
   }>;
 };
+
+/**
+ * Разрешаем открывать новые slug, даже если они не попали
+ * в generateStaticParams на этапе предыдущей сборки.
+ * Это важно для связки ISR + revalidate.
+ */
+export const dynamicParams = true;
 
 function formatDate(dateString: string) {
   return new Intl.DateTimeFormat("ru-RU", {
@@ -57,6 +65,11 @@ const portableTextComponents: PortableTextComponents = {
   types: {
     image: ({ value }) => {
       const imageValue = value as PortableTextImageValue;
+
+      /**
+       * Для inline-контента статьи берём контролируемый размер,
+       * чтобы не тянуть слишком тяжёлые изображения в тело материала.
+       */
       const imageUrl = urlFor(imageValue).width(1400).fit("crop").url();
 
       if (!imageUrl) {
@@ -68,7 +81,7 @@ const portableTextComponents: PortableTextComponents = {
           <div className={styles.contentFigureMedia}>
             <Image
               src={imageUrl}
-              alt={imageValue.alt || ""}
+              alt={imageValue.alt || "Изображение в статье"}
               fill
               sizes="(max-width: 768px) 100vw, 760px"
               className={styles.contentFigureImage}
@@ -88,7 +101,7 @@ const portableTextComponents: PortableTextComponents = {
 
 /**
  * Предварительно собираем известные slug'и для статических страниц.
- * Актуальность списка дальше будет зависеть от fetch-слоя Sanity.
+ * Список берём через общий fetch-слой Sanity.
  */
 export async function generateStaticParams() {
   const slugs = await getBlogPostSlugs();
@@ -99,8 +112,9 @@ export async function generateStaticParams() {
 }
 
 /**
- * Metadata берем из Sanity через тот же fetch-слой,
- * чтобы кэш и revalidation вели себя одинаково для страницы и SEO.
+ * Metadata берём из Sanity через тот же fetch-слой,
+ * чтобы кэш и revalidation вели себя одинаково
+ * для страницы и SEO-данных.
  */
 export async function generateMetadata({
   params,
@@ -110,15 +124,49 @@ export async function generateMetadata({
 
   if (!article) {
     return {
-      title: "Материал временно недоступен | Carmanof",
+      title: "Материал не найден | Carmanof",
       description:
-        "Материал временно недоступен. Перейдите на главную страницу и посмотрите основные услуги и подход к работе.",
+        "Запрошенный материал не найден. Перейдите на главную страницу и посмотрите основные услуги и примеры работ.",
+      robots: {
+        index: false,
+        follow: false,
+      },
     };
   }
 
+  const title = article.seoTitle || `${article.title} | Carmanof`;
+  const description = article.seoDescription || article.excerpt;
+  const canonicalPath = `/blog/${article.slug}`;
+  const ogImage = article.coverImage?.asset?.url;
+
   return {
-    title: article.seoTitle || `${article.title} | Carmanof`,
-    description: article.seoDescription || article.excerpt,
+    title,
+    description,
+    alternates: {
+      canonical: canonicalPath,
+    },
+    openGraph: {
+      title,
+      description,
+      type: "article",
+      locale: "ru_RU",
+      url: canonicalPath,
+      publishedTime: article.publishedAt,
+      images: ogImage
+        ? [
+            {
+              url: ogImage,
+              alt: article.coverImage?.alt || article.title,
+            },
+          ]
+        : [],
+    },
+    twitter: {
+      card: ogImage ? "summary_large_image" : "summary",
+      title,
+      description,
+      images: ogImage ? [ogImage] : [],
+    },
   };
 }
 
@@ -126,32 +174,14 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   const { slug } = await params;
 
   /**
-   * Основной контент статьи также идет через общий fetch-слой.
-   * Это важно, чтобы route не жил отдельно от общей стратегии кэша Sanity.
+   * Основной контент статьи также идёт через общий fetch-слой.
+   * Это важно, чтобы route не жил отдельно
+   * от общей стратегии кэша Sanity.
    */
   const article = await getBlogPostBySlug(slug);
 
   if (!article) {
-    return (
-      <main className={styles.page}>
-        <article className={styles.article}>
-          <Container>
-            <div className={styles.inner}>
-              <header className={styles.hero}>
-                <p className={styles.kicker}>Полезный материал по теме</p>
-
-                <h1 className={styles.title}>Материал временно недоступен</h1>
-
-                <p className={styles.excerpt}>
-                  Сейчас мы не смогли загрузить эту страницу. Вы можете перейти
-                  на главную и посмотреть услуги, подход и примеры работ.
-                </p>
-              </header>
-            </div>
-          </Container>
-        </article>
-      </main>
-    );
+    notFound();
   }
 
   const coverImageUrl = article.coverImage?.asset?.url;

@@ -1,23 +1,36 @@
 import type { Metadata } from "next";
 import PhotoCasesClient from "./PhotoCasesClient";
-import { getPhotoCases, type PhotoCase } from "@/sanity/lib/fetchers";
+import { getPhotoCases } from "@/sanity/lib/fetchers";
 
 export const metadata: Metadata = {
   title: "Фото примеры работ | Carmanof",
   description:
     "Фото кейсы Carmanof: примеры выполненных работ с приборными панелями и визуальный результат.",
+  alternates: {
+    canonical: "/cases/photo",
+  },
+  openGraph: {
+    title: "Фото примеры работ | Carmanof",
+    description:
+      "Фото кейсы Carmanof: примеры выполненных работ с приборными панелями и визуальный результат.",
+    type: "website",
+    locale: "ru_RU",
+    url: "/cases/photo",
+  },
+  twitter: {
+    card: "summary",
+    title: "Фото примеры работ | Carmanof",
+    description:
+      "Фото кейсы Carmanof: примеры выполненных работ с приборными панелями и визуальный результат.",
+  },
 };
 
 export default async function PhotoCasesPage() {
-  let photoCases: PhotoCase[] = [];
-
-  try {
-    // Получаем кейсы из Sanity
-    photoCases = await getPhotoCases();
-  } catch (error) {
-    // ❗ страница не падает даже при VPN / timeout
-    console.error("PhotoCasesPage error:", error);
-  }
+  /**
+   * getPhotoCases() уже использует safeFetch
+   * и возвращает [] при ошибке.
+   */
+  const photoCases = await getPhotoCases();
 
   return <PhotoCasesClient photoCases={photoCases} />;
 }
