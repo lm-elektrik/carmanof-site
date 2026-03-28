@@ -60,11 +60,10 @@ export function urlFor(source: SanityImageSource) {
 /**
  * Оптимизированный URL для Hero-изображений.
  *
- * Логика:
- * - визуальный размер блока: 520x500
- * - для retina-экранов отдаём 2x размер, чтобы картинка не выглядела мягкой
- * - формат webp уменьшает вес файла
- * - quality 80 даёт хороший баланс качества и размера
+ * Здесь сознательно снижаем размер и качество:
+ * - мобильный LCP важнее, чем избыточный запас пикселей
+ * - 800px хватает даже для retina на hero-блоке
+ * - quality 70 даёт заметное снижение веса без явной потери визуала
  */
 export function getHeroImageUrl(source: SanityImageSource | undefined | null) {
   if (!isValidImageSource(source)) {
@@ -73,9 +72,10 @@ export function getHeroImageUrl(source: SanityImageSource | undefined | null) {
 
   return buildOptimizedImageUrl({
     source,
-    width: 1040,
-    height: 1000,
+    width: 800,
+    height: 760,
     fit: "crop",
+    quality: 70,
   });
 }
 
