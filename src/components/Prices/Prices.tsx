@@ -38,7 +38,7 @@ export default function Prices({ items = fallbackItems }: PricesProps) {
     >
       <div className={styles.container}>
         <div className={styles.content}>
-          <div className={styles.badge}>Ориентир по цене</div>
+          <div className={styles.badge}>Наши цены</div>
 
           <div className={styles.grid}>
             <h2 id="prices-title" className={styles.visuallyHidden}>

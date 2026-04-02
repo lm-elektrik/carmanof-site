@@ -26,14 +26,6 @@ import {
   getMoreExamplesBottomImageUrl,
 } from "@/sanity/lib/image";
 
-/**
- * Fallback revalidation для главной страницы.
- * Даже если webhook не сработает — страница обновится сама.
- *
- * Важно:
- * - не заменяет tag-based revalidation
- * - работает как страховка
- */
 export const revalidate = 120;
 
 type MoreExamplesImageItem = {
@@ -52,7 +44,10 @@ function buildHeroImage(params: {
 }): string {
   const { image, fallbackSrc } = params;
 
-  return image ? getHeroImageUrl(image) : fallbackSrc;
+  // ✅ фикс: проверяем реальную валидность картинки
+  const hasValidImage = Boolean(image?.asset?.url);
+
+  return hasValidImage ? getHeroImageUrl(image) : fallbackSrc;
 }
 
 function buildMoreExamplesImage(params: {
@@ -63,7 +58,9 @@ function buildMoreExamplesImage(params: {
 }): MoreExamplesImageItem {
   const { image, fallbackSrc, fallbackAlt, row } = params;
 
-  const optimizedSrc = image
+  const hasValidImage = Boolean(image?.asset?.url);
+
+  const optimizedSrc = hasValidImage
     ? row === "top"
       ? getMoreExamplesTopImageUrl(image)
       : getMoreExamplesBottomImageUrl(image)
@@ -103,15 +100,6 @@ function buildFaqItem(params: {
 }
 
 export default async function HomePage() {
-  /**
-   * На главной используем только лёгкие запросы:
-   * - настройки сайта
-   * - 3 видео-кейса для блока
-   * - булеву проверку наличия фото-кейсов
-   *
-   * Это дешевле, чем тянуть весь массив photoCases
-   * только ради вычисления hasCases.
-   */
   const [settingsResult, videoCasesResult, hasPhotoCasesResult] =
     await Promise.allSettled([
       getSiteSettings(),
@@ -130,34 +118,8 @@ export default async function HomePage() {
       ? hasPhotoCasesResult.value
       : false;
 
-  if (settingsResult.status === "rejected") {
-    console.error("HomePage siteSettings error:", settingsResult.reason);
-  }
-
-  if (videoCasesResult.status === "rejected") {
-    console.error("HomePage videoCases error:", videoCasesResult.reason);
-  }
-
-  if (hasPhotoCasesResult.status === "rejected") {
-    console.error(
-      "HomePage photoCases availability error:",
-      hasPhotoCasesResult.reason,
-    );
-  }
-
-  /**
-   * Кнопка перехода в хаб кейсов должна быть активна,
-   * если на сайте есть хотя бы один кейс любого типа:
-   * видео или фото.
-   */
   const hasCases = videoCases.length > 0 || photoCasesAvailable;
 
-  /**
-   * Hero-картинки:
-   * - если поле заполнено в Sanity, отдаём оптимизированную версию
-   *   через getHeroImageUrl()
-   * - если поле пустое, используем локальный fallback из /public
-   */
   const heroDefaultImageSrc = buildHeroImage({
     image: settings?.heroDefaultImage,
     fallbackSrc: "/images/hero/hero-default.webp",
@@ -168,12 +130,6 @@ export default async function HomePage() {
     fallbackSrc: "/images/hero/hero-hover.webp",
   });
 
-  /**
-   * 5 изображений блока MoreExamplesBlock.
-   * Порядок фиксированный: 2 сверху и 3 снизу.
-   * Верхний и нижний ряд используют разные пресеты кропа,
-   * чтобы сетка выглядела аккуратнее при разном визуальном весе карточек.
-   */
   const moreExamplesImages = [
     buildMoreExamplesImage({
       image: settings?.moreExamplesImage01,
@@ -207,15 +163,6 @@ export default async function HomePage() {
     }),
   ];
 
-  /**
-   * 3 позиции блока Prices.
-   * В админке меняются только:
-   * - вид работы
-   * - число
-   *
-   * На сайте префикс "от" и символ "₽" добавляются в компоненте,
-   * поэтому здесь держим только чистое значение.
-   */
   const priceItems = [
     buildPriceItem({
       title: settings?.pricesItem01Title,
@@ -237,11 +184,6 @@ export default async function HomePage() {
     }),
   ];
 
-  /**
-   * FAQ:
-   * - если в Sanity есть массив faqItems, берём его
-   * - если массив пустой или не заполнен, используем fallback из 5 вопросов
-   */
   const faqItems = [
     buildFaqItem({
       item: settings?.faqItems?.[0],

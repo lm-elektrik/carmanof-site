@@ -1,28 +1,14 @@
-"use client";
-
-import { usePathname } from "next/navigation";
-import Header from "@/components/Header/Header";
-import Intro from "@/components/Intro/Intro";
+import { getSiteSettings } from "@/sanity/lib/fetchers";
+import LayoutChromeClient from "@/components/LayoutChrome/LayoutChromeClient";
 
 type LayoutChromeProps = {
   children: React.ReactNode;
 };
 
-export default function LayoutChrome({ children }: LayoutChromeProps) {
-  const pathname = usePathname() || "/";
-
-  const isStudioPage = pathname.startsWith("/studio");
-  const isHomePage = pathname === "/";
-
-  if (isStudioPage) {
-    return <>{children}</>;
-  }
+export default async function LayoutChrome({ children }: LayoutChromeProps) {
+  const settings = await getSiteSettings();
 
   return (
-    <>
-      {isHomePage ? <Intro /> : null}
-      <Header />
-      {children}
-    </>
+    <LayoutChromeClient phone={settings?.phone}>{children}</LayoutChromeClient>
   );
 }

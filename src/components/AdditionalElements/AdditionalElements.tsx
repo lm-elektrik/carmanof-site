@@ -17,16 +17,16 @@ const items: AdditionalItem[] = [
     iconAlt: "Иконка стрелок",
   },
   {
+    id: "hoods",
+    label: "ПЛАТЫ УПРАВЛЕНИЯ",
+    icon: "/icons/additional-elements/hoods.svg",
+    iconAlt: "Платы управления",
+  },
+  {
     id: "rings",
     label: "КОЛЬЦА",
     icon: "/icons/additional-elements/rings.svg",
     iconAlt: "Иконка колец",
-  },
-  {
-    id: "hoods",
-    label: "КОЛОДЦЫ",
-    icon: "/icons/additional-elements/hoods.svg",
-    iconAlt: "Иконка колодцев",
   },
 ];
 

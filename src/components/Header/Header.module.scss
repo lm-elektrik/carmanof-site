@@ -128,10 +128,53 @@
   align-items: center;
 }
 
+/* 🔥 ВАЖНО: добавили gap */
 .action {
   display: flex;
   align-items: center;
+  gap: 16px; /* ← чтобы телефон не прилипал к кнопке */
   flex-shrink: 0;
+}
+
+/* ✅ НОВОЕ: стиль телефона */
+.phone {
+  font-size: 18px;
+  font-weight: 500;
+  color: #1d1f23;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+
+  position: relative;
+
+  transition:
+    color 0.2s ease,
+    opacity 0.2s ease;
+}
+
+/* hover как у link-primary (мягкий) */
+.phone:hover {
+  opacity: 0.7;
+}
+
+/* лёгкий underline-эффект (как в студиях) */
+.phone::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+
+  transform: scaleX(0);
+  transform-origin: left;
+
+  transition: transform 0.2s ease;
+}
+
+.phone:hover::after {
+  transform: scaleX(1);
 }
 
 .button {
@@ -211,53 +254,6 @@
   transform: translateX(-50%) translateY(0) scale(1);
 }
 
-.mobileNav {
-  width: 100%;
-}
-
-.mobileList {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.mobileItem + .mobileItem {
-  margin-top: 6px;
-}
-
-.mobileLink {
-  display: flex;
-  align-items: center;
-  min-height: 48px;
-  padding: 0 14px;
-  border-radius: 16px;
-  text-decoration: none;
-
-  font-family: Manrope, sans-serif;
-  font-size: 16px;
-  font-weight: 500;
-  color: #1d1f23;
-
-  transition:
-    background-color 0.18s ease,
-    color 0.18s ease;
-}
-
-.mobileLink:hover {
-  background: rgba(108, 136, 181, 0.08);
-  color: #1d1f23;
-}
-
-/* Minimal header on desktop:
-   logo + CTA, without nav */
-.headerMinimal .inner {
-  justify-content: space-between;
-}
-
-.headerMinimal .nav {
-  display: none;
-}
-
 /* Tablet / mobile */
 @media (max-width: 767px) {
   .header {
@@ -270,8 +266,6 @@
     border-radius: 24px;
   }
 
-  /* По умолчанию на mobile:
-     logo hidden, burger shown (главная) */
   .logo {
     display: none;
   }
@@ -284,7 +278,6 @@
     display: none;
   }
 
-  /* Обычную навигацию прячем */
   .nav {
     display: none;
   }
@@ -295,6 +288,11 @@
 
   .action {
     margin-left: auto;
+  }
+
+  /* ❗ телефон на мобиле скрываем (чтобы не ломал layout) */
+  .phone {
+    display: none;
   }
 
   .button {
@@ -311,8 +309,6 @@
     display: inline;
   }
 
-  /* Minimal header on mobile:
-     burger hidden, mobile logo shown */
   .headerMinimal .burger {
     display: none;
   }

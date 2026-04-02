@@ -37,6 +37,7 @@ export type SiteSettings = {
   phone?: string;
   email?: string;
   telegram?: string;
+  whatsapp?: string;
   vk?: string;
 
   /**

@@ -35,7 +35,7 @@
 
 .bottom {
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) 420px;
+  grid-template-columns: minmax(0, 1.2fr) 436px;
   gap: 24px;
   align-items: center;
 }
@@ -225,18 +225,67 @@
 
 .rightArea {
   display: grid;
-  grid-template-columns: 120px 80px 160px;
+  grid-template-columns: 132px 48px 160px;
   gap: 24px;
   align-items: start;
   width: 100%;
+}
+
+.workInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 6px;
+
+  height: 160px;
+  text-align: left;
+}
+
+.workLabel {
+  margin: 0;
+
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 400;
+  color: rgba(29, 31, 35, 0.62);
+}
+
+.workValue {
+  margin: 0;
+
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 400;
+  color: #1d1f23;
+}
+
+.workPhone {
+  margin-top: 8px;
+
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 15px;
+  line-height: 21px;
+  font-weight: 500;
+  color: #1d1f23;
+  text-decoration: none;
+  white-space: nowrap;
+
+  transition: opacity 180ms ease;
+}
+
+.workPhone:hover {
+  opacity: 0.72;
 }
 
 .messengers {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 16px;
+  justify-content: flex-start;
+  gap: 8px;
 
   height: 160px;
 }
@@ -246,9 +295,9 @@
   align-items: center;
   justify-content: center;
 
-  width: 72px;
-  height: 72px;
-  border-radius: 20px;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
 
   text-decoration: none;
   transition:
@@ -274,39 +323,8 @@
 
 .messengerIcon {
   display: block;
-  width: 72px;
-  height: 72px;
-}
-
-.workInfo {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  gap: 6px;
-
-  height: 160px;
-  text-align: left;
-}
-
-.workLabel {
-  margin: 0;
-
-  font-family: var(--font-manrope), sans-serif;
-  font-size: 14px;
-  line-height: 18px;
-  font-weight: 400;
-  color: rgba(29, 31, 35, 0.62);
-}
-
-.workValue {
-  margin: 0;
-
-  font-family: var(--font-manrope), sans-serif;
-  font-size: 16px;
-  line-height: 22px;
-  font-weight: 400;
-  color: #1d1f23;
+  width: 48px;
+  height: 48px;
 }
 
 .qrArea {
@@ -398,33 +416,41 @@
 
   .rightArea {
     display: grid;
-    grid-template-columns: 1fr auto auto;
-    gap: 24px;
-    align-items: center;
+    grid-template-columns: 1fr 44px 144px;
+    gap: 20px;
+    align-items: start;
     justify-self: start;
     width: 100%;
   }
 
   .workInfo {
-    height: auto;
+    height: 144px;
     align-items: flex-start;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 4px;
     text-align: left;
   }
 
+  .workPhone {
+    margin-top: 6px;
+    font-size: 14px;
+    line-height: 20px;
+  }
+
   .messengers {
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    height: auto;
+    justify-content: flex-start;
+    gap: 6px;
+    height: 144px;
   }
 
   .messengerLink,
   .messengerIcon {
-    width: 60px;
-    height: 60px;
+    width: 44px;
+    height: 44px;
+  }
+
+  .messengerLink {
+    border-radius: 12px;
   }
 
   .qrArea {
@@ -534,18 +560,28 @@
     line-height: 21px;
   }
 
+  .workPhone {
+    margin-top: 6px;
+    font-size: 14px;
+    line-height: 20px;
+  }
+
   .messengers {
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
-    gap: 12px;
+    gap: 10px;
     height: auto;
   }
 
   .messengerLink,
   .messengerIcon {
-    width: 60px;
-    height: 60px;
+    width: 52px;
+    height: 52px;
+  }
+
+  .messengerLink {
+    border-radius: 14px;
   }
 
   .qrArea {

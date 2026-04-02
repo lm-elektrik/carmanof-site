@@ -25,6 +25,13 @@ export const siteSettingsType = defineType({
     }),
 
     defineField({
+      name: "whatsapp",
+      title: "WhatsApp",
+      type: "url",
+      description: "Ссылка на WhatsApp (например: https://wa.me/79991234567)",
+    }),
+
+    defineField({
       name: "vk",
       title: "VK",
       type: "url",

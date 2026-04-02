@@ -9,6 +9,7 @@ export const siteSettingsQuery = groq`
     phone,
     email,
     telegram,
+    whatsapp,
     vk,
 
     heroDefaultImage{

@@ -2,12 +2,14 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
+import { formatPhone } from "@/lib/formatPhone";
 import styles from "./Contact.module.scss";
 
 type ContactSettings = {
   phone?: string;
   email?: string;
   telegram?: string;
+  whatsapp?: string;
   vk?: string;
 };
 
@@ -24,13 +26,10 @@ type MessengerItem = {
 function isPhoneObviouslyFake(phoneDigits: string) {
   if (phoneDigits.length !== 10) return true;
 
-  // Все цифры одинаковые: 0000000000, 1111111111 и т.д.
   if (/^(\d)\1{9}$/.test(phoneDigits)) return true;
 
-  // Российский номер после +7 не должен начинаться с 0
   if (phoneDigits.startsWith("0")) return true;
 
-  // Совсем очевидные тестовые/фейковые последовательности
   if (
     phoneDigits === "1234567890" ||
     phoneDigits === "0123456789" ||
@@ -45,7 +44,6 @@ function isPhoneObviouslyFake(phoneDigits: string) {
 function normalizePhoneInput(rawValue: string) {
   const digitsOnly = rawValue.replace(/\D/g, "");
 
-  // Нормальный случай автоподстановки: 79991234567 или 89991234567
   if (
     digitsOnly.length === 11 &&
     (digitsOnly.startsWith("7") || digitsOnly.startsWith("8"))
@@ -53,12 +51,10 @@ function normalizePhoneInput(rawValue: string) {
     return digitsOnly.slice(1);
   }
 
-  // Если пришёл слишком длинный номер/строка с мусором — берём последние 10 цифр
   if (digitsOnly.length > 10) {
     return digitsOnly.slice(-10);
   }
 
-  // Если пользователь ещё вводит номер вручную
   return digitsOnly;
 }
 
@@ -97,6 +93,11 @@ export default function Contact({ settings }: ContactProps) {
         icon: "/icons/contact/tg.svg",
       },
       {
+        name: "WhatsApp",
+        href: settings?.whatsapp,
+        icon: "/icons/contact/wa.svg",
+      },
+      {
         name: "VK",
         href: settings?.vk,
         icon: "/icons/contact/vk.svg",
@@ -130,11 +131,8 @@ export default function Contact({ settings }: ContactProps) {
       submittedAt: new Date().toLocaleString("ru-RU"),
     };
 
-    // Здесь будет реальная отправка в API / на почту.
-    // Пока оставляем подготовленный payload в лог, чтобы не ломать текущую структуру.
     console.log(submissionPayload);
 
-    // Очищаем форму и показываем success-state прямо в поле телефона
     setName("");
     setPhoneDigits("");
     setIsChecked(false);
@@ -252,6 +250,15 @@ export default function Contact({ settings }: ContactProps) {
                 <p className={styles.workLabel}>Режим работы</p>
                 <p className={styles.workValue}>Пн – Сб</p>
                 <p className={styles.workValue}>10:00–19:00</p>
+
+                {settings?.phone ? (
+                  <a
+                    href={`tel:${settings.phone.replace(/\D/g, "")}`}
+                    className={styles.workPhone}
+                  >
+                    {formatPhone(settings.phone)}
+                  </a>
+                ) : null}
               </div>
 
               <div className={styles.messengers}>
@@ -268,8 +275,8 @@ export default function Contact({ settings }: ContactProps) {
                       <Image
                         src={item.icon}
                         alt=""
-                        width={72}
-                        height={72}
+                        width={48}
+                        height={48}
                         className={styles.messengerIcon}
                         aria-hidden="true"
                       />
@@ -283,8 +290,8 @@ export default function Contact({ settings }: ContactProps) {
                       <Image
                         src={item.icon}
                         alt=""
-                        width={72}
-                        height={72}
+                        width={48}
+                        height={48}
                         className={styles.messengerIcon}
                         aria-hidden="true"
                       />
