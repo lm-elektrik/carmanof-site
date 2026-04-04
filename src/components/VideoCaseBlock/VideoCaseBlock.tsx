@@ -51,7 +51,7 @@ export default function VideoCaseBlock({ videoCases }: VideoCaseBlockProps) {
   return (
     <Section
       id="cases"
-      className={styles.section}
+      className={styles.anchorOffset}
       aria-labelledby="video-cases-title"
     >
       <Container>

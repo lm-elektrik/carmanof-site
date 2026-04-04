@@ -36,7 +36,7 @@ export default function ProcessBlock() {
   return (
     <Section
       id="process"
-      className={styles.section}
+      className={styles.anchorOffset}
       aria-labelledby="process-block-title"
     >
       <Container>

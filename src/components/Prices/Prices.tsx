@@ -34,7 +34,7 @@ export default function Prices({ items = fallbackItems }: PricesProps) {
   return (
     <Section
       id="prices"
-      className={styles.section}
+      className={styles.anchorOffset}
       aria-labelledby="prices-title"
     >
       <div className={styles.container}>

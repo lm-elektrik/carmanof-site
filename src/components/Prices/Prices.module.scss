@@ -1,15 +1,16 @@
 @use "@/styles/variables" as *;
 
-.section {
+.anchorOffset {
   scroll-margin-top: 172px;
 }
 
 .container {
   width: min($container-width, calc(100vw - 32px));
   margin: 0 auto;
-  border-radius: $radius-xl;
   overflow: hidden;
+
   border: 1px solid $color-border-soft;
+  border-radius: $radius-xl;
   background: $color-surface;
   box-shadow: $shadow-sm, $highlight-soft;
 }
@@ -30,8 +31,8 @@
   height: 32px;
   padding: 0 14px;
 
-  border-radius: 999px;
   border: 1px solid $color-border-soft;
+  border-radius: 999px;
   background: $color-surface-soft;
 
   font-family: var(--font-manrope), sans-serif;
