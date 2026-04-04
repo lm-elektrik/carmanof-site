@@ -69,10 +69,22 @@ export default function CookieConsent() {
         backdropFilter: "blur(12px)",
       }}
     >
-      <p style={{ margin: 0, fontSize: 14, lineHeight: 1.5 }}>
-        Мы используем cookie и аналитические инструменты, чтобы улучшать работу
-        сайта. Нажимая «Принять», вы соглашаетесь на использование аналитических
-        cookie.
+      <p style={{ margin: 0, fontSize: 14, lineHeight: 1.6, color: "#1b252b" }}>
+        Мы используем cookie для корректной работы сайта и анализа посещаемости.
+        Продолжая использовать сайт, вы соглашаетесь с применением cookie в
+        соответствии с{" "}
+        <a
+          href="/privacy"
+          style={{
+            color: "#1b252b",
+            fontWeight: 600,
+            textDecoration: "underline",
+            textUnderlineOffset: 2,
+          }}
+        >
+          Политикой конфиденциальности
+        </a>
+        .
       </p>
 
       <div
@@ -114,7 +126,7 @@ export default function CookieConsent() {
             cursor: "pointer",
           }}
         >
-          Отклонить
+          Только обязательные
         </button>
       </div>
     </div>
