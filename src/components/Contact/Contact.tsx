@@ -90,6 +90,8 @@ export default function Contact({ settings }: ContactProps) {
   const [name, setName] = useState("");
   const [isChecked, setIsChecked] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   useEffect(() => {
     if (!isSuccess) return;
@@ -127,38 +129,69 @@ export default function Contact({ settings }: ContactProps) {
     return phoneDigits.length === 10 && !isPhoneObviouslyFake(phoneDigits);
   }, [phoneDigits]);
 
-  const isFormValid = isPhoneValid && isChecked;
+  const isFormValid = isPhoneValid && isChecked && !isSubmitting;
 
   function handlePhoneChange(event: React.ChangeEvent<HTMLInputElement>) {
     const normalizedDigits = normalizePhoneInput(event.target.value);
     setPhoneDigits(normalizedDigits);
+
+    if (submitError) {
+      setSubmitError("");
+    }
   }
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (!isFormValid) return;
+    if (!isPhoneValid || !isChecked || isSubmitting) return;
+
+    const formData = new FormData(event.currentTarget);
+    const honey = String(formData.get("company") || "").trim();
+
+    setSubmitError("");
+    setIsSubmitting(true);
 
     trackFormSubmit("contact_form");
 
-    const fullPhone = `+7${phoneDigits}`;
-    const submissionPayload = {
-      subject: 'Заявка с сайта "Карманов"',
-      name: name.trim() || "Не указано",
-      phone: fullPhone,
-      consentAccepted: true,
-      source: "Форма контактов на сайте",
-      submittedAt: new Date().toLocaleString("ru-RU"),
-    };
+    try {
+      const fullPhone = `+7${phoneDigits}`;
 
-    console.log(submissionPayload);
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: name.trim(),
+          phone: fullPhone,
+          consentAccepted: true,
+          source: window.location.pathname,
+          company: honey,
+        }),
+      });
 
-    setName("");
-    setPhoneDigits("");
-    setIsChecked(false);
-    setIsSuccess(true);
+      const result = (await response.json().catch(() => null)) as {
+        ok?: boolean;
+        error?: string;
+      } | null;
 
-    trackFormSuccess("contact_form");
+      if (!response.ok || !result?.ok) {
+        throw new Error(result?.error || "Не удалось отправить заявку.");
+      }
+
+      setName("");
+      setPhoneDigits("");
+      setIsChecked(false);
+      setIsSuccess(true);
+
+      trackFormSuccess("contact_form");
+    } catch {
+      setSubmitError(
+        "Не удалось отправить заявку. Попробуйте ещё раз или свяжитесь с нами по телефону.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   function handlePhoneClick() {
@@ -211,6 +244,8 @@ export default function Contact({ settings }: ContactProps) {
                     autoComplete="name"
                     value={name}
                     onChange={(event) => setName(event.target.value)}
+                    disabled={isSubmitting}
+                    maxLength={80}
                   />
 
                   <label
@@ -243,16 +278,35 @@ export default function Contact({ settings }: ContactProps) {
                         value={formatPhoneDigits(phoneDigits)}
                         onChange={handlePhoneChange}
                         aria-invalid={phoneDigits.length > 0 && !isPhoneValid}
+                        disabled={isSubmitting}
                       />
                     )}
                   </div>
+
+                  <label
+                    className={styles.visuallyHidden}
+                    htmlFor="contact-company"
+                  >
+                    Компания
+                  </label>
+
+                  <input
+                    id="contact-company"
+                    name="company"
+                    type="text"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    className={styles.visuallyHidden}
+                    aria-hidden="true"
+                    disabled={isSubmitting}
+                  />
 
                   <button
                     type="submit"
                     className={styles.button}
                     disabled={!isFormValid}
                   >
-                    Отправить
+                    {isSubmitting ? "Отправка..." : "Отправить"}
                   </button>
                 </form>
 
@@ -260,14 +314,27 @@ export default function Contact({ settings }: ContactProps) {
                   <input
                     type="checkbox"
                     checked={isChecked}
-                    onChange={(event) => setIsChecked(event.target.checked)}
+                    onChange={(event) => {
+                      setIsChecked(event.target.checked);
+
+                      if (submitError) {
+                        setSubmitError("");
+                      }
+                    }}
+                    disabled={isSubmitting}
                   />
                   <span>Даю согласие на обработку персональных данных</span>
                 </label>
 
-                <p className={styles.formNote}>
-                  Ответим в рабочее время и подскажем лучший вариант.
-                </p>
+                {submitError ? (
+                  <p className={styles.formNote} role="alert">
+                    {submitError}
+                  </p>
+                ) : (
+                  <p className={styles.formNote}>
+                    Ответим в рабочее время и подскажем лучший вариант.
+                  </p>
+                )}
               </div>
             </div>
 
