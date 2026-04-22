@@ -19,9 +19,9 @@ const items: AdditionalItem[] = [
   },
   {
     id: "hoods",
-    label: "ПЛАТЫ УПРАВЛЕНИЯ",
+    label: "ПЛАТЫ ПОДСВЕТКИ",
     icon: "/icons/additional-elements/hoods.svg",
-    iconAlt: "Платы управления",
+    iconAlt: "Платы подсветки",
   },
   {
     id: "rings",

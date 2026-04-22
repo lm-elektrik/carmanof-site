@@ -70,17 +70,16 @@ export default function Hero({
   );
 
   const handleMediaClick = useCallback(() => {
-  const target = document.querySelector("#other-works");
-  if (!target) return;
+    const target = document.querySelector("#other-works");
+    if (!target) return;
 
-  const top =
-    target.getBoundingClientRect().top + window.pageYOffset - 172;
+    const top = target.getBoundingClientRect().top + window.pageYOffset - 172;
 
-  window.scrollTo({
-    top,
-    behavior: "smooth",
-  });
-}, []);
+    window.scrollTo({
+      top,
+      behavior: "smooth",
+    });
+  }, []);
 
   function handleIntroTransitionEnd() {
     if (isDesktopHover && introPhase === "animating") {
@@ -127,13 +126,13 @@ export default function Hero({
               </h1>
 
               <p className={styles.description}>
-                Мы создаем индивидуальные шкалы
+                Мы создаем индивидуальные шкалы{" "}
                 <br />
-                для спидометров, тахометров и других
+                {" "}для спидометров, тахометров и других{" "}
                 <br />
-                приборов на автомобили любых марок -
+                {" "}приборов на автомобили любых марок -{" "}
                 <br />
-                от отечественных до премиум-класса.
+                {" "}от отечественных до премиум-класса.
               </p>
 
               <p className={styles.caption}>
